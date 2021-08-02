@@ -1,0 +1,172 @@
+configfile: "config.yaml"
+""" snakefile to filter an input vcf-file as specified in the config.yaml"""
+
+#if config["infile"].endswith(".vcf"):
+#    base = config["infile"].rsplit("/", 1)[1].rsplit(".")[0]
+#else:
+#    base = config["infile"].rsplit("/", 1)[1].rsplit(".",2)[0]
+infolder = config["infolder"]
+files = glob_wildcards(os.path.join(infolder, "{sample}.vcf")
+
+outfolder = config["outfolder"]+"/"
+print(base)
+
+
+rule all:
+    input:
+        outfolder+"all_GQ{}_MQ{}_SOR{}_MQRS{}_RPRS{}_QD{}_noIndels_callrate{}.vcf".format(config["params"]["GQ"],
+                                                              config["params"]["MQ"],
+                                                              config["params"]["SOR"],
+                                                              config["params"]["MQRS"],
+                                                              config["params"]["RPRS"],
+                                                              config["params"]["QD"],
+							      config["params"]["CR"]
+                                                              )
+
+rule bcftools_GQ:
+    input:
+        config["infile"]
+    params:
+        GQ = config["params"]["GQ"]
+    output:
+        temp(outfolder+base+"_GQ{}.vcf".format(config["params"]["GQ"]))
+    shell:
+        "module load bioinfo-tools;module load bcftools;bcftools filter --set-GTs . -e 'GQ<{params.GQ}' {input} -O v  > {output}"
+
+rule bcftools_MQ:
+    input:
+        outfolder+base+"_GQ{}.vcf".format(config["params"]["GQ"])
+    output:
+        temp(outfolder+base+"_GQ{}_MQ{}.vcf".format(config["params"]["GQ"],
+                                         config["params"]["MQ"]
+                                         ))
+    params:
+        MQ=config["params"]["MQ"]
+    shell:
+        "module load bioinfo-tools;module load bcftools;bcftools filter -e 'INFO/MQ<{params.MQ}' {input} -O v > {output}"
+
+rule bcftools_SOR:
+    input:
+        outfolder+base+"_GQ{}_MQ{}.vcf".format(config["params"]["GQ"],
+                                     config["params"]["MQ"]
+                                     )
+    params:
+        SOR = config["params"]["SOR"]
+    output:
+        temp(outfolder+base+"_GQ{}_MQ{}_SOR{}.vcf".format(config["params"]["GQ"],
+                                                config["params"]["MQ"],
+                                                config["params"]["SOR"]
+                                                ))
+    shell:
+        "module load bioinfo-tools;module load bcftools;bcftools filter -e 'INFO/SOR>{params.SOR}' {input} -O v > {output}"
+
+rule bcftools_MQRS:
+    input:
+        outfolder+base+"_GQ{}_MQ{}_SOR{}.vcf".format(config["params"]["GQ"],
+                                           config["params"]["MQ"],
+                                           config["params"]["SOR"]
+                                           )
+    params:
+        MQRS = config["params"]["MQRS"]
+    output:
+        temp(outfolder+base+"_GQ{}_MQ{}_SOR{}_MQRS{}.vcf".format(config["params"]["GQ"],
+                                                       config["params"]["MQ"],
+                                                       config["params"]["SOR"],
+                                                       config["params"]["MQRS"]
+                                                       ))
+    shell:
+        "module load bioinfo-tools;module load bcftools;bcftools filter -e 'INFO/MQRankSum<-{params.MQRS} && INFO/MQRankSum>{params.MQRS}' {input} -O v > {output}"
+
+rule bcftools_RPRS:
+    input:
+        outfolder+base+"_GQ{}_MQ{}_SOR{}_MQRS{}.vcf".format(config["params"]["GQ"],
+                                                  config["params"]["MQ"],
+                                                  config["params"]["SOR"],
+                                                  config["params"]["MQRS"]
+                                                  )
+    params:
+        RPRS = config["params"]["RPRS"]
+    output:
+        temp(outfolder+base+"_GQ{}_MQ{}_SOR{}_MQRS{}_RPRS{}.vcf".format(config["params"]["GQ"],
+                                                              config["params"]["MQ"],
+                                                              config["params"]["SOR"],
+                                                              config["params"]["MQRS"],
+                                                              config["params"]["RPRS"]
+                                                              ))
+    shell:
+        "module load bioinfo-tools;module load bcftools;bcftools filter -e 'INFO/ReadPosRankSum<{params.RPRS}' -O v {input} > {output}"
+
+rule bcftools_QD:
+    input:
+        outfolder+base+"_GQ{}_MQ{}_SOR{}_MQRS{}_RPRS{}.vcf".format(config["params"]["GQ"],
+                                                         config["params"]["MQ"],
+                                                         config["params"]["SOR"],
+                                                         config["params"]["MQRS"],
+                                                         config["params"]["RPRS"],
+                                                         )
+    params:
+        QD = config["params"]["QD"]
+    output:
+        outfolder+base+"_GQ{}_MQ{}_SOR{}_MQRS{}_RPRS{}_QD{}.vcf".format(config["params"]["GQ"],
+                                                              config["params"]["MQ"],
+                                                              config["params"]["SOR"],
+                                                              config["params"]["MQRS"],
+                                                              config["params"]["RPRS"],
+                                                              config["params"]["QD"]
+                                                              )
+    shell:
+        "module load bioinfo-tools;module load bcftools;bcftools filter -e 'INFO/QD<{params.QD}' -O v {input} > {output}"
+
+rule bcftools_exclude_indels:
+    input:
+        outfolder+base+"_GQ{}_MQ{}_SOR{}_MQRS{}_RPRS{}_QD{}.vcf".format(config["params"]["GQ"],
+                                                              config["params"]["MQ"],
+                                                              config["params"]["SOR"],
+                                                              config["params"]["MQRS"],
+                                                              config["params"]["RPRS"],
+                                                              config["params"]["QD"]
+                                                              ) 
+    output:
+        outfolder+base+"_GQ{}_MQ{}_SOR{}_MQRS{}_RPRS{}_QD{}_noIndels.vcf".format(config["params"]["GQ"],
+                                                              config["params"]["MQ"],
+                                                              config["params"]["SOR"],
+                                                              config["params"]["MQRS"],
+                                                              config["params"]["RPRS"],
+                                                              config["params"]["QD"]
+                                                              )
+    shell:
+        "module load bioinfo-tools;module load bcftools;bcftools view --exclude-types indels -O v {input} > {output}"
+
+rule vcftools_callrate:
+    input:
+        outfolder+base+"_GQ{}_MQ{}_SOR{}_MQRS{}_RPRS{}_QD{}_noIndels.vcf".format(config["params"]["GQ"],
+                                                                                 config["params"]["MQ"],
+                                                                                 config["params"]["SOR"],
+                                                                                 config["params"]["MQRS"],
+                                                                                 config["params"]["RPRS"],
+                                                                                 config["params"]["QD"]
+                                                                                 )
+
+    params:
+        CR = config["params"]["CR"]
+    output:
+        outfolder+base+"_GQ{}_MQ{}_SOR{}_MQRS{}_RPRS{}_QD{}_noIndels_callrate{}.vcf".format(config["params"]["GQ"],
+											    config["params"]["MQ"],
+											    config["params"]["SOR"],
+                                                              				    config["params"]["MQRS"],
+                                                              				    config["params"]["RPRS"],
+                                                              				    config["params"]["QD"],
+							      				    config["params"]["CR"]
+                                                              				    )
+
+    shell:
+        "module load bioinfo-tools; module load vcftools; vcftools --vcf {input} --max-missing {params.CR}  --recode --recode-INFO-all --out {output}"
+
+
+rule vcftools_concat:
+    input:
+        expand(outfolder+"{{sample}}_GQ{}_MQ{}_SOR{}_MQRS{}_RPRS{}_QD{}_noIndels_callrate{}.vcf".format(config["params"]["GQ"],config["params"]["MQ"],config["params"]["SOR"],config["params"]["MQRS"],config["params"]["RPRS"],config["params"]["QD"],config["params"]["CR"]),sample=files)
+    output:
+        outfolder+"all_GQ{}_MQ{}_SOR{}_MQRS{}_RPRS{}_QD{}_noIndels_callrate{}.vcf".format(config["params"]["GQ"],config["params"]["MQ"],config["params"]["SOR"],config["params"]["MQRS"],config["params"]["RPRS"],config["params"]["QD"],config["params"]["CR"])
+    shell:
+        "module load bioinfo-tools;module load vcftools; vcf-concat {input} > {output}"

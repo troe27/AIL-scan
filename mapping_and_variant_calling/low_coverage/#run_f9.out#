@@ -1,0 +1,521 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cluster nodes: 250
+Job counts:
+	count	jobs
+	1	all
+	22	call
+	22	cleanBam
+	22	map
+	22	tabix
+	22	transform
+	111
+
+rule map:
+    input: /home/tilman/storage/F9/fastq/F9_2313_S73_L004_R1_001.fastq.gz, /home/tilman/storage/F9/fastq/F9_2313_S73_L004_R2_001.fastq.gz, /home/tilman/storage/ref_gg6a/GCF_000002315.5_GRCg6a_genomic.fna.gz, /home/tilman/storage/ref_gg6a/GCF_000002315.5_GRCg6a_genomic.fna.gz.bwt
+    output: /home/tilman/storage/F9/data/F9_2313_S73_L004.bam
+    jobid: 345
+    wildcards: sample=F9_2313_S73_L004
+    threads: 4
+
+config/slurm_scheduler.py:28: UserWarning: Rule map has no memory specified, set to default.
+  warnings.warn("Rule {rule} has no memory specified, set to default.".format(**job_properties))
+Submit job with parameters:
+	threads : 4
+	days : 0
+	hours : 8
+	name : map
+	profile : snic2018-3-170
+Submitted job 345 with external jobid '7296876'.
+
+rule map:
+    input: /home/tilman/storage/F9/fastq/F9_2299_S67_L004_R1_001.fastq.gz, /home/tilman/storage/F9/fastq/F9_2299_S67_L004_R2_001.fastq.gz, /home/tilman/storage/ref_gg6a/GCF_000002315.5_GRCg6a_genomic.fna.gz, /home/tilman/storage/ref_gg6a/GCF_000002315.5_GRCg6a_genomic.fna.gz.bwt
+    output: /home/tilman/storage/F9/data/F9_2299_S67_L004.bam
+    jobid: 336
+    wildcards: sample=F9_2299_S67_L004
+    threads: 4
+
+config/slurm_scheduler.py:28: UserWarning: Rule map has no memory specified, set to default.
+  warnings.warn("Rule {rule} has no memory specified, set to default.".format(**job_properties))
+Submit job with parameters:
+	threads : 4
+	days : 0
+	hours : 8
+	name : map
+	profile : snic2018-3-170
+Submitted job 336 with external jobid '7296881'.
+
+rule map:
+    input: /home/tilman/storage/F9/fastq/F9_2321_S78_L004_R1_001.fastq.gz, /home/tilman/storage/F9/fastq/F9_2321_S78_L004_R2_001.fastq.gz, /home/tilman/storage/ref_gg6a/GCF_000002315.5_GRCg6a_genomic.fna.gz, /home/tilman/storage/ref_gg6a/GCF_000002315.5_GRCg6a_genomic.fna.gz.bwt
+    output: /home/tilman/storage/F9/data/F9_2321_S78_L004.bam
+    jobid: 374
+    wildcards: sample=F9_2321_S78_L004
+    threads: 4
+
+config/slurm_scheduler.py:28: UserWarning: Rule map has no memory specified, set to default.
+  warnings.warn("Rule {rule} has no memory specified, set to default.".format(**job_properties))
+Submit job with parameters:
+	threads : 4
+	days : 0
+	hours : 8
+	name : map
+	profile : snic2018-3-170
+Submitted job 374 with external jobid '7296889'.
+
+rule map:
+    input: /home/tilman/storage/F9/fastq/F9_2319_S76_L004_R1_001.fastq.gz, /home/tilman/storage/F9/fastq/F9_2319_S76_L004_R2_001.fastq.gz, /home/tilman/storage/ref_gg6a/GCF_000002315.5_GRCg6a_genomic.fna.gz, /home/tilman/storage/ref_gg6a/GCF_000002315.5_GRCg6a_genomic.fna.gz.bwt
+    output: /home/tilman/storage/F9/data/F9_2319_S76_L004.bam
+    jobid: 380
+    wildcards: sample=F9_2319_S76_L004
+    threads: 4
+
+config/slurm_scheduler.py:28: UserWarning: Rule map has no memory specified, set to default.
+  warnings.warn("Rule {rule} has no memory specified, set to default.".format(**job_properties))
+Submit job with parameters:
+	threads : 4
+	days : 0
+	hours : 8
+	name : map
+	profile : snic2018-3-170
+Submitted job 380 with external jobid '7296893'.
+
+rule map:
+    input: /home/tilman/storage/F9/fastq/F9_2288_S63_L004_R1_001.fastq.gz, /home/tilman/storage/F9/fastq/F9_2288_S63_L004_R2_001.fastq.gz, /home/tilman/storage/ref_gg6a/GCF_000002315.5_GRCg6a_genomic.fna.gz, /home/tilman/storage/ref_gg6a/GCF_000002315.5_GRCg6a_genomic.fna.gz.bwt
+    output: /home/tilman/storage/F9/data/F9_2288_S63_L004.bam
+    jobid: 343
+    wildcards: sample=F9_2288_S63_L004
+    threads: 4
+
+config/slurm_scheduler.py:28: UserWarning: Rule map has no memory specified, set to default.
+  warnings.warn("Rule {rule} has no memory specified, set to default.".format(**job_properties))
+Submit job with parameters:
+	threads : 4
+	days : 0
+	hours : 8
+	name : map
+	profile : snic2018-3-170
+Submitted job 343 with external jobid '7296897'.
+
+rule map:
+    input: /home/tilman/storage/F9/fastq/F9_2265_S50_L004_R1_001.fastq.gz, /home/tilman/storage/F9/fastq/F9_2265_S50_L004_R2_001.fastq.gz, /home/tilman/storage/ref_gg6a/GCF_000002315.5_GRCg6a_genomic.fna.gz, /home/tilman/storage/ref_gg6a/GCF_000002315.5_GRCg6a_genomic.fna.gz.bwt
+    output: /home/tilman/storage/F9/data/F9_2265_S50_L004.bam
+    jobid: 358
+    wildcards: sample=F9_2265_S50_L004
+    threads: 4
+
+config/slurm_scheduler.py:28: UserWarning: Rule map has no memory specified, set to default.
+  warnings.warn("Rule {rule} has no memory specified, set to default.".format(**job_properties))
+Submit job with parameters:
+	threads : 4
+	days : 0
+	hours : 8
+	name : map
+	profile : snic2018-3-170
+Submitted job 358 with external jobid '7296902'.
+
+rule map:
+    input: /home/tilman/storage/F9/fastq/F9_2300_S68_L004_R1_001.fastq.gz, /home/tilman/storage/F9/fastq/F9_2300_S68_L004_R2_001.fastq.gz, /home/tilman/storage/ref_gg6a/GCF_000002315.5_GRCg6a_genomic.fna.gz, /home/tilman/storage/ref_gg6a/GCF_000002315.5_GRCg6a_genomic.fna.gz.bwt
+    output: /home/tilman/storage/F9/data/F9_2300_S68_L004.bam
+    jobid: 371
+    wildcards: sample=F9_2300_S68_L004
+    threads: 4
+
+config/slurm_scheduler.py:28: UserWarning: Rule map has no memory specified, set to default.
+  warnings.warn("Rule {rule} has no memory specified, set to default.".format(**job_properties))
+Submit job with parameters:
+	threads : 4
+	days : 0
+	hours : 8
+	name : map
+	profile : snic2018-3-170
+Submitted job 371 with external jobid '7296908'.
+
+rule map:
+    input: /home/tilman/storage/F9/fastq/F9_2235_S40_L004_R1_001.fastq.gz, /home/tilman/storage/F9/fastq/F9_2235_S40_L004_R2_001.fastq.gz, /home/tilman/storage/ref_gg6a/GCF_000002315.5_GRCg6a_genomic.fna.gz, /home/tilman/storage/ref_gg6a/GCF_000002315.5_GRCg6a_genomic.fna.gz.bwt
+    output: /home/tilman/storage/F9/data/F9_2235_S40_L004.bam
+    jobid: 393
+    wildcards: sample=F9_2235_S40_L004
+    threads: 4
+
+config/slurm_scheduler.py:28: UserWarning: Rule map has no memory specified, set to default.
+  warnings.warn("Rule {rule} has no memory specified, set to default.".format(**job_properties))
+Submit job with parameters:
+	threads : 4
+	days : 0
+	hours : 8
+	name : map
+	profile : snic2018-3-170
+Submitted job 393 with external jobid '7296912'.
+
+rule map:
+    input: /home/tilman/storage/F9/fastq/F9_2274_S53_L004_R1_001.fastq.gz, /home/tilman/storage/F9/fastq/F9_2274_S53_L004_R2_001.fastq.gz, /home/tilman/storage/ref_gg6a/GCF_000002315.5_GRCg6a_genomic.fna.gz, /home/tilman/storage/ref_gg6a/GCF_000002315.5_GRCg6a_genomic.fna.gz.bwt
+    output: /home/tilman/storage/F9/data/F9_2274_S53_L004.bam
+    jobid: 354
+    wildcards: sample=F9_2274_S53_L004
+    threads: 4
+
+config/slurm_scheduler.py:28: UserWarning: Rule map has no memory specified, set to default.
+  warnings.warn("Rule {rule} has no memory specified, set to default.".format(**job_properties))
+Submit job with parameters:
+	threads : 4
+	days : 0
+	hours : 8
+	name : map
+	profile : snic2018-3-170
+Submitted job 354 with external jobid '7296917'.
+
+rule map:
+    input: /home/tilman/storage/F9/fastq/F9_2257_S47_L004_R1_001.fastq.gz, /home/tilman/storage/F9/fastq/F9_2257_S47_L004_R2_001.fastq.gz, /home/tilman/storage/ref_gg6a/GCF_000002315.5_GRCg6a_genomic.fna.gz, /home/tilman/storage/ref_gg6a/GCF_000002315.5_GRCg6a_genomic.fna.gz.bwt
+    output: /home/tilman/storage/F9/data/F9_2257_S47_L004.bam
+    jobid: 321
+    wildcards: sample=F9_2257_S47_L004
+    threads: 4
+
+config/slurm_scheduler.py:28: UserWarning: Rule map has no memory specified, set to default.
+  warnings.warn("Rule {rule} has no memory specified, set to default.".format(**job_properties))
+Submit job with parameters:
+	threads : 4
+	days : 0
+	hours : 8
+	name : map
+	profile : snic2018-3-170
+Submitted job 321 with external jobid '7296924'.
+
+rule map:
+    input: /home/tilman/storage/F9/fastq/F9_2306_S72_L004_R1_001.fastq.gz, /home/tilman/storage/F9/fastq/F9_2306_S72_L004_R2_001.fastq.gz, /home/tilman/storage/ref_gg6a/GCF_000002315.5_GRCg6a_genomic.fna.gz, /home/tilman/storage/ref_gg6a/GCF_000002315.5_GRCg6a_genomic.fna.gz.bwt
+    output: /home/tilman/storage/F9/data/F9_2306_S72_L004.bam
+    jobid: 364
+    wildcards: sample=F9_2306_S72_L004
+    threads: 4
+
+config/slurm_scheduler.py:28: UserWarning: Rule map has no memory specified, set to default.
+  warnings.warn("Rule {rule} has no memory specified, set to default.".format(**job_properties))
+Submit job with parameters:
+	threads : 4
+	days : 0
+	hours : 8
+	name : map
+	profile : snic2018-3-170
+Submitted job 364 with external jobid '7296927'.
+
+rule map:
+    input: /home/tilman/storage/F9/fastq/F9_2303_S70_L004_R1_001.fastq.gz, /home/tilman/storage/F9/fastq/F9_2303_S70_L004_R2_001.fastq.gz, /home/tilman/storage/ref_gg6a/GCF_000002315.5_GRCg6a_genomic.fna.gz, /home/tilman/storage/ref_gg6a/GCF_000002315.5_GRCg6a_genomic.fna.gz.bwt
+    output: /home/tilman/storage/F9/data/F9_2303_S70_L004.bam
+    jobid: 346
+    wildcards: sample=F9_2303_S70_L004
+    threads: 4
+
+config/slurm_scheduler.py:28: UserWarning: Rule map has no memory specified, set to default.
+  warnings.warn("Rule {rule} has no memory specified, set to default.".format(**job_properties))
+Submit job with parameters:
+	threads : 4
+	days : 0
+	hours : 8
+	name : map
+	profile : snic2018-3-170
+Submitted job 346 with external jobid '7296932'.
+
+rule map:
+    input: /home/tilman/storage/F9/fastq/F9_2287_S62_L004_R1_001.fastq.gz, /home/tilman/storage/F9/fastq/F9_2287_S62_L004_R2_001.fastq.gz, /home/tilman/storage/ref_gg6a/GCF_000002315.5_GRCg6a_genomic.fna.gz, /home/tilman/storage/ref_gg6a/GCF_000002315.5_GRCg6a_genomic.fna.gz.bwt
+    output: /home/tilman/storage/F9/data/F9_2287_S62_L004.bam
+    jobid: 368
+    wildcards: sample=F9_2287_S62_L004
+    threads: 4
+
+config/slurm_scheduler.py:28: UserWarning: Rule map has no memory specified, set to default.
+  warnings.warn("Rule {rule} has no memory specified, set to default.".format(**job_properties))
+Submit job with parameters:
+	threads : 4
+	days : 0
+	hours : 8
+	name : map
+	profile : snic2018-3-170
+Submitted job 368 with external jobid '7296937'.
+
+rule map:
+    input: /home/tilman/storage/F9/fastq/F9_2281_S59_L004_R1_001.fastq.gz, /home/tilman/storage/F9/fastq/F9_2281_S59_L004_R2_001.fastq.gz, /home/tilman/storage/ref_gg6a/GCF_000002315.5_GRCg6a_genomic.fna.gz, /home/tilman/storage/ref_gg6a/GCF_000002315.5_GRCg6a_genomic.fna.gz.bwt
+    output: /home/tilman/storage/F9/data/F9_2281_S59_L004.bam
+    jobid: 352
+    wildcards: sample=F9_2281_S59_L004
+    threads: 4
+
+config/slurm_scheduler.py:28: UserWarning: Rule map has no memory specified, set to default.
+  warnings.warn("Rule {rule} has no memory specified, set to default.".format(**job_properties))
+Submit job with parameters:
+	threads : 4
+	days : 0
+	hours : 8
+	name : map
+	profile : snic2018-3-170
+Submitted job 352 with external jobid '7296942'.
+
+rule map:
+    input: /home/tilman/storage/F9/fastq/F9_2305_S71_L004_R1_001.fastq.gz, /home/tilman/storage/F9/fastq/F9_2305_S71_L004_R2_001.fastq.gz, /home/tilman/storage/ref_gg6a/GCF_000002315.5_GRCg6a_genomic.fna.gz, /home/tilman/storage/ref_gg6a/GCF_000002315.5_GRCg6a_genomic.fna.gz.bwt
+    output: /home/tilman/storage/F9/data/F9_2305_S71_L004.bam
+    jobid: 335
+    wildcards: sample=F9_2305_S71_L004
+    threads: 4
+
+config/slurm_scheduler.py:28: UserWarning: Rule map has no memory specified, set to default.
+  warnings.warn("Rule {rule} has no memory specified, set to default.".format(**job_properties))
+Submit job with parameters:
+	threads : 4
+	days : 0
+	hours : 8
+	name : map
+	profile : snic2018-3-170
+Submitted job 335 with external jobid '7296943'.
+
+rule map:
+    input: /home/tilman/storage/F9/fastq/F9_2301_S69_L004_R1_001.fastq.gz, /home/tilman/storage/F9/fastq/F9_2301_S69_L004_R2_001.fastq.gz, /home/tilman/storage/ref_gg6a/GCF_000002315.5_GRCg6a_genomic.fna.gz, /home/tilman/storage/ref_gg6a/GCF_000002315.5_GRCg6a_genomic.fna.gz.bwt
+    output: /home/tilman/storage/F9/data/F9_2301_S69_L004.bam
+    jobid: 391
+    wildcards: sample=F9_2301_S69_L004
+    threads: 4
+
+config/slurm_scheduler.py:28: UserWarning: Rule map has no memory specified, set to default.
+  warnings.warn("Rule {rule} has no memory specified, set to default.".format(**job_properties))
+Submit job with parameters:
+	threads : 4
+	days : 0
+	hours : 8
+	name : map
+	profile : snic2018-3-170
+Submitted job 391 with external jobid '7296948'.
+
+rule map:
+    input: /home/tilman/storage/F9/fastq/F9_2297_S65_L004_R1_001.fastq.gz, /home/tilman/storage/F9/fastq/F9_2297_S65_L004_R2_001.fastq.gz, /home/tilman/storage/ref_gg6a/GCF_000002315.5_GRCg6a_genomic.fna.gz, /home/tilman/storage/ref_gg6a/GCF_000002315.5_GRCg6a_genomic.fna.gz.bwt
+    output: /home/tilman/storage/F9/data/F9_2297_S65_L004.bam
+    jobid: 318
+    wildcards: sample=F9_2297_S65_L004
+    threads: 4
+
+config/slurm_scheduler.py:28: UserWarning: Rule map has no memory specified, set to default.
+  warnings.warn("Rule {rule} has no memory specified, set to default.".format(**job_properties))
+Submit job with parameters:
+	threads : 4
+	days : 0
+	hours : 8
+	name : map
+	profile : snic2018-3-170
+Submitted job 318 with external jobid '7296954'.
+
+rule map:
+    input: /home/tilman/storage/F9/fastq/F9_2266_S51_L004_R1_001.fastq.gz, /home/tilman/storage/F9/fastq/F9_2266_S51_L004_R2_001.fastq.gz, /home/tilman/storage/ref_gg6a/GCF_000002315.5_GRCg6a_genomic.fna.gz, /home/tilman/storage/ref_gg6a/GCF_000002315.5_GRCg6a_genomic.fna.gz.bwt
+    output: /home/tilman/storage/F9/data/F9_2266_S51_L004.bam
+    jobid: 365
+    wildcards: sample=F9_2266_S51_L004
+    threads: 4
+
+config/slurm_scheduler.py:28: UserWarning: Rule map has no memory specified, set to default.
+  warnings.warn("Rule {rule} has no memory specified, set to default.".format(**job_properties))
+Submit job with parameters:
+	threads : 4
+	days : 0
+	hours : 8
+	name : map
+	profile : snic2018-3-170
+Submitted job 365 with external jobid '7296959'.
+
+rule map:
+    input: /home/tilman/storage/F9/fastq/F9_2256_S46_L004_R1_001.fastq.gz, /home/tilman/storage/F9/fastq/F9_2256_S46_L004_R2_001.fastq.gz, /home/tilman/storage/ref_gg6a/GCF_000002315.5_GRCg6a_genomic.fna.gz, /home/tilman/storage/ref_gg6a/GCF_000002315.5_GRCg6a_genomic.fna.gz.bwt
+    output: /home/tilman/storage/F9/data/F9_2256_S46_L004.bam
+    jobid: 344
+    wildcards: sample=F9_2256_S46_L004
+    threads: 4
+
+config/slurm_scheduler.py:28: UserWarning: Rule map has no memory specified, set to default.
+  warnings.warn("Rule {rule} has no memory specified, set to default.".format(**job_properties))
+Submit job with parameters:
+	threads : 4
+	days : 0
+	hours : 8
+	name : map
+	profile : snic2018-3-170
+Submitted job 344 with external jobid '7296962'.
+
+rule map:
+    input: /home/tilman/storage/F9/fastq/F9_2320_S77_L004_R1_001.fastq.gz, /home/tilman/storage/F9/fastq/F9_2320_S77_L004_R2_001.fastq.gz, /home/tilman/storage/ref_gg6a/GCF_000002315.5_GRCg6a_genomic.fna.gz, /home/tilman/storage/ref_gg6a/GCF_000002315.5_GRCg6a_genomic.fna.gz.bwt
+    output: /home/tilman/storage/F9/data/F9_2320_S77_L004.bam
+    jobid: 379
+    wildcards: sample=F9_2320_S77_L004
+    threads: 4
+
+config/slurm_scheduler.py:28: UserWarning: Rule map has no memory specified, set to default.
+  warnings.warn("Rule {rule} has no memory specified, set to default.".format(**job_properties))
+Submit job with parameters:
+	threads : 4
+	days : 0
+	hours : 8
+	name : map
+	profile : snic2018-3-170
+Submitted job 379 with external jobid '7296967'.
+
+rule map:
+    input: /home/tilman/storage/F9/fastq/F9_2258_S48_L004_R1_001.fastq.gz, /home/tilman/storage/F9/fastq/F9_2258_S48_L004_R2_001.fastq.gz, /home/tilman/storage/ref_gg6a/GCF_000002315.5_GRCg6a_genomic.fna.gz, /home/tilman/storage/ref_gg6a/GCF_000002315.5_GRCg6a_genomic.fna.gz.bwt
+    output: /home/tilman/storage/F9/data/F9_2258_S48_L004.bam
+    jobid: 381
+    wildcards: sample=F9_2258_S48_L004
+    threads: 4
+
+config/slurm_scheduler.py:28: UserWarning: Rule map has no memory specified, set to default.
+  warnings.warn("Rule {rule} has no memory specified, set to default.".format(**job_properties))
+Submit job with parameters:
+	threads : 4
+	days : 0
+	hours : 8
+	name : map
+	profile : snic2018-3-170
+Submitted job 381 with external jobid '7296972'.
+
+rule map:
+    input: /home/tilman/storage/F9/fastq/F9_2236_S41_L004_R1_001.fastq.gz, /home/tilman/storage/F9/fastq/F9_2236_S41_L004_R2_001.fastq.gz, /home/tilman/storage/ref_gg6a/GCF_000002315.5_GRCg6a_genomic.fna.gz, /home/tilman/storage/ref_gg6a/GCF_000002315.5_GRCg6a_genomic.fna.gz.bwt
+    output: /home/tilman/storage/F9/data/F9_2236_S41_L004.bam
+    jobid: 362
+    wildcards: sample=F9_2236_S41_L004
+    threads: 4
+
+config/slurm_scheduler.py:28: UserWarning: Rule map has no memory specified, set to default.
+  warnings.warn("Rule {rule} has no memory specified, set to default.".format(**job_properties))
+Submit job with parameters:
+	threads : 4
+	days : 0
+	hours : 8
+	name : map
+	profile : snic2018-3-170
+Submitted job 362 with external jobid '7296978'.
+Error in rule map:
+    jobid: 336
+    output: /home/tilman/storage/F9/data/F9_2299_S67_L004.bam
+    cluster_jobid: 7296881
+
+Job failed, going on with independent jobs.
+Error in rule map:
+    jobid: 352
+    output: /home/tilman/storage/F9/data/F9_2281_S59_L004.bam
+    cluster_jobid: 7296942
+
+Job failed, going on with independent jobs.
+Error in rule map:
+    jobid: 371
+    output: /home/tilman/storage/F9/data/F9_2300_S68_L004.bam
+    cluster_jobid: 7296908
+
+Job failed, going on with independent jobs.
+Error in rule map:
+    jobid: 335
+    output: /home/tilman/storage/F9/data/F9_2305_S71_L004.bam
+    cluster_jobid: 7296943
+
+Job failed, going on with independent jobs.
+Error in rule map:
+    jobid: 354
+    output: /home/tilman/storage/F9/data/F9_2274_S53_L004.bam
+    cluster_jobid: 7296917
+
+Job failed, going on with independent jobs.
+Error in rule map:
+    jobid: 343
+    output: /home/tilman/storage/F9/data/F9_2288_S63_L004.bam
+    cluster_jobid: 7296897
+
+Job failed, going on with independent jobs.
+Error in rule map:
+    jobid: 358
+    output: /home/tilman/storage/F9/data/F9_2265_S50_L004.bam
+    cluster_jobid: 7296902
+
+Job failed, going on with independent jobs.
+Error in rule map:
+    jobid: 345
+    output: /home/tilman/storage/F9/data/F9_2313_S73_L004.bam
+    cluster_jobid: 7296876
+
+Job failed, going on with independent jobs.
+Error in rule map:
+    jobid: 368
+    output: /home/tilman/storage/F9/data/F9_2287_S62_L004.bam
+    cluster_jobid: 7296937
+
+Job failed, going on with independent jobs.
+Error in rule map:
+    jobid: 374
+    output: /home/tilman/storage/F9/data/F9_2321_S78_L004.bam
+    cluster_jobid: 7296889
+
+Job failed, going on with independent jobs.
+Error in rule map:
+    jobid: 391
+    output: /home/tilman/storage/F9/data/F9_2301_S69_L004.bam
+    cluster_jobid: 7296948
+
+Job failed, going on with independent jobs.
+Error in rule map:
+    jobid: 346
+    output: /home/tilman/storage/F9/data/F9_2303_S70_L004.bam
+    cluster_jobid: 7296932
+
+Job failed, going on with independent jobs.
+Error in rule map:
+    jobid: 364
+    output: /home/tilman/storage/F9/data/F9_2306_S72_L004.bam
+    cluster_jobid: 7296927
+
+Job failed, going on with independent jobs.
+Error in rule map:
+    jobid: 380
+    output: /home/tilman/storage/F9/data/F9_2319_S76_L004.bam
+    cluster_jobid: 7296893
+
+Job failed, going on with independent jobs.
+Error in rule map:
+    jobid: 321
+    output: /home/tilman/storage/F9/data/F9_2257_S47_L004.bam
+    cluster_jobid: 7296924
+
+Job failed, going on with independent jobs.
+Error in rule map:
+    jobid: 365
+    output: /home/tilman/storage/F9/data/F9_2266_S51_L004.bam
+    cluster_jobid: 7296959
+
+Job failed, going on with independent jobs.
+Error in rule map:
+    jobid: 393
+    output: /home/tilman/storage/F9/data/F9_2235_S40_L004.bam
+    cluster_jobid: 7296912
+
+Job failed, going on with independent jobs.
+Error in rule map:
+    jobid: 379
+    output: /home/tilman/storage/F9/data/F9_2320_S77_L004.bam
+    cluster_jobid: 7296967
+
+Job failed, going on with independent jobs.
+Error in rule map:
+    jobid: 344
+    output: /home/tilman/storage/F9/data/F9_2256_S46_L004.bam
+    cluster_jobid: 7296962
+
+Job failed, going on with independent jobs.
+Error in rule map:
+    jobid: 381
+    output: /home/tilman/storage/F9/data/F9_2258_S48_L004.bam
+    cluster_jobid: 7296972
+
+Job failed, going on with independent jobs.
+Error in rule map:
+    jobid: 318
+    output: /home/tilman/storage/F9/data/F9_2297_S65_L004.bam
+    cluster_jobid: 7296954
+
+Job failed, going on with independent jobs.
+Error in rule map:
+    jobid: 362
+    output: /home/tilman/storage/F9/data/F9_2236_S41_L004.bam
+    cluster_jobid: 7296978
+
+Job failed, going on with independent jobs.
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: /domus/h1/tilman/scripts/chicken_finemapping/mapping_and_variant_calling/low_coverage/.snakemake/log/2019-01-18T121129.594049.snakemake.log

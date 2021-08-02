@@ -1,0 +1,89 @@
+"""
+Description: snakemake pipeline to format the Stripes output for r/qtl
+Author:      tilman.ronneburg@imbim.uu.se
+Date:        20190801
+"""
+
+import os
+configfile: "config/config_f15.yaml"
+
+
+rule all:
+    input:
+        genotypes =os.path.join(config["outfolder"],
+                                "rqtl_genotypes_FilteredForBinsize"+str(config["binsize"])+"_FilteredForXO"+str(config["xo_minsize"])+"removedAmb02.csv") ,
+        phenotypes =os.path.join(config["outfolder"],
+                                "rqtl_phenotypes_FilteredForBinsize"+str(config["binsize"])+"_FilteredForXO"+str(config["xo_minsize"])+"removedAmb02.csv")
+
+
+rule format_in_r:
+    """ Make genotype matrix and filter for all bins that have fewer than 10 markers.
+        This script contains quite a few sample specific regular expressions & will likely break at some point.
+        Here's to hoping that i will replace it with something generic before it does."""
+    input:
+        genotypes = config["input_folder"],
+        chr_ranks = config["chr_ranks_file"],
+        tiger_out = config["tiger_folder"]
+    output:
+        os.path.join(config["outfolder"], "gt_matrix_FilteredForBinsize"+str(config["binsize"])+".csv")
+    params:
+        binsize = config["binsize"],
+        cutoff = config["cutoff"]
+    shell:
+        "Rscript --vanilla scripts/format_zy.R  {input.genotypes} {input.tiger_out} {input.chr_ranks} {params.binsize} {params.cutoff} {output}"
+
+
+rule filter_gt_xo_size:
+    """ set all crossovers below 3 mb in size to missing."""
+    input:
+        genotypes = os.path.join(config["outfolder"], "gt_matrix_FilteredForBinsize"+str(config["binsize"])+".csv"),
+    output:
+        outfile = os.path.join(config["outfolder"], "gt_matrix_FilteredForBinsize"+str(config["binsize"])+"_FilteredForXO"+str(config["xo_minsize"])+".csv"),
+    params:
+        cutoff = config["xo_minsize"]
+    run:
+        from scripts.QC.GT_matrices import Genotypes, Pedigree
+        gt = Genotypes(gt_file=input.genotypes)
+        gt.order_matrices(all_mt=False)
+        gt.xo_filter(thresh=params.cutoff)
+        filtered_matrix = gt.apply_filters()
+        filtered_matrix.to_csv(output.outfile)
+
+
+rule make_rqtl_input:
+    """
+    remove unclear calls that deviate more than the allowed jitter from expected genotypes.
+    format output for R/qtl.
+    """
+    input:
+        genotypes = os.path.join(config["outfolder"],
+                                "gt_matrix_FilteredForBinsize"+str(config["binsize"])+"_FilteredForXO"+str(config["xo_minsize"])+".csv"),
+        phenotypes = config["phenotype_file"]
+    output:
+        genotypes =os.path.join(config["outfolder"],
+                                "rqtl_genotypes_FilteredForBinsize"+str(config["binsize"])+"_FilteredForXO"+str(config["xo_minsize"])+"removedAmb02.csv") ,
+        phenotypes =os.path.join(config["outfolder"],
+                                "rqtl_phenotypes_FilteredForBinsize"+str(config["binsize"])+"_FilteredForXO"+str(config["xo_minsize"])+"removedAmb02.csv") ,
+    params:
+        generation = config["generation"],
+        jitter = config["jitter"]
+    run:
+        import pandas as pd
+        from scripts.downstream_formatting import make_rqtl_input
+        from scripts.downstream_formatting import make_rqtl_geno_input
+        #catch that annoying thing where the leading zero gets truncated:
+        if len(params.generation)==1:
+            generation = "0"+str(params.generation)
+        else:
+            generation = str(params.generation)
+        df = pd.read_csv(input.genotypes)
+        df.index = df["Unnamed: 0"].astype(str)
+        del(df["Unnamed: 0"])
+        #print(df.index)
+        make_rqtl_input(df=df,
+                        gen_out=output.genotypes,
+                        phe_out=output.phenotypes,
+                        generation=params.generation,
+                        old_id_pheno=True,
+                        phenotype=input.phenotypes,
+                        jitter=float(params.jitter))

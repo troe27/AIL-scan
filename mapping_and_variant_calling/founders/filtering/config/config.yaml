@@ -1,0 +1,12 @@
+infolder: "/home/tilman/storage/subset3/vcf"
+outfolder: "/home/tilman/storage/subset3"
+params:
+  read_depth: "3"
+  GQ: "20"
+  avg_GQ: "15"
+  QD: "4"
+  MQ: "50"
+  MQRS: "0"
+  SOR: "1.5"
+  RPRS: "0"
+  CR: "0.3"

@@ -1,0 +1,172 @@
+"""
+Description: snakemake pipeline to clean vcfs for Stripes
+Author     : tilman.ronneburg@imbim.uu.se
+Date       : 20190806
+"""
+
+import os
+configfile: "config/config.yaml"
+wild = glob_wildcards(os.path.join(config["main_folder"],"{sample}","stripes_input"))
+
+
+rule all:
+    input:
+        expand(os.path.join(config["main_folder"],"{sample}","stripes_input", "all_{sample}_only_founder_snps_NoDuplicates_NewNames.vcf"),sample=wild.sample),
+        expand(os.path.join(config["main_folder"],"{sample}","stripes_input","phenotypes_{sample}.csv"),sample=wild.sample)
+
+
+rule check_for_duplicates:
+    input:
+        vcf = os.path.join(config["main_folder"],"{sample}","stripes_input", "all_{sample}_only_founder_snps.vcf.bgz")
+    output:
+        duplicates = os.path.join(config["main_folder"],"{sample}","stripes_input","duplicates_{samples}.txt")
+    params:
+        threads = 4
+    run:
+        from cyvcf2 import VCF
+        from collections import Counter
+        infile = input.vcf
+        vcf = VCF(infile, threads=params.threads)
+        samples = vcf.samples
+        sample_ids = []
+        for s in samples:
+            s2 = s.rsplit("/",1)[1]
+            s3 = s2.split("_")
+            if s3[0].startswith("F") == True: # ugh, why dont all files follow the same naming convention.
+                sample_ids.append(s3[1])
+            else:
+                sample_ids.append(s3[0])
+        d=dict(Counter(sample_ids))
+        dups = [key for key, item in d.items() if item>1]
+        if len(dups)>=1:
+            print("duplicates found!:\n"+"\n".join(dups))
+            with open(output.duplicates, "w") as handle:
+                handle.write("\n".join(dups))
+        else:
+            open(output.duplicates, "a").close() # create empty file.
+
+rule make_phenotype_file:
+    input:
+        phefile = config["phenotypefile"]
+    output:
+        phefile = os.path.join(config["main_folder"],"{sample}","stripes_input","phenotypes_{sample}.csv")
+    params:
+        phenotype = config["phenotype"],
+        gen = "{sample}"
+    run:
+        import pandas as pd
+        full = pd.read_csv(input.phefile)
+        gen_slice = full.loc[full["GENERATION"]==params.gen][["ID", params.phenotype]]
+        gen_slice.to_csv(output.phefile, index=False)
+
+
+rule make_qual:
+    input:
+        vcf = os.path.join(config["main_folder"],"{sample}","stripes_input", "all_{sample}_only_founder_snps.vcf.bgz"),
+        duplicates = os.path.join(config["main_folder"],"{sample}","stripes_input","duplicates_{sample}.txt")
+    output:
+        imiss = os.path.join(config["main_folder"],"{sample}","stripes_input","{sample}.imiss")
+    params:
+        outprefix = os.path.join(config["main_folder"],"{sample}","stripes_input","{sample}")
+    run:
+        import os
+        a = os.stat(input.duplicates).st_size==0
+        if a == True: # if file is empty
+            open(output.imiss, "w").close() # propagate empty file.
+        else: # look at missingness.
+            subprocess.call(["vcftools", "--missing-indv", "--out", params.outprefix,  "--vcf", input.vcf])
+
+
+
+rule indentify_bad_duplicates:
+    input:
+        duplicates = os.path.join(config["main_folder"],"{sample}","stripes_input","duplicates_{sample}.txt"),
+        imiss = os.path.join(config["main_folder"],"{sample}","stripes_input","{sample}.imiss")
+    output:
+        bad_dups = os.path.join(config["main_folder"],"{sample}","stripes_input", "bad_duplicates_{sample}.txt")
+    run:
+        import os
+        a = os.stat(input.duplicates).st_size==0
+        if a == True: # if file is empty
+            open(output.bad_dups, "w").close() # propagate empty file.
+        else:
+            dups = open(input.duplicates).read().split("\n")
+            with open(input.imiss, "r") as handle:
+                qual = handle.read().split("\n")
+                qual.pop(0)
+                qual = [i.split("\t") for i in qual]
+            #check which samples are bad:
+            p = {}
+            for i in qual:
+                if len(i)>1:
+                    s = i[0].rsplit("/",1)[1].split("_")[0]
+                    s2 = i[0].rsplit("/",1)[1].split("_")[1]
+                    if s in dups:
+                        p.setdefault(s, {})[i[4]] = str(i[0])
+                    elif s2 in dups:
+                        p.setdefault(s2, {})[i[4]] = str(i[0])
+            best_per_sample = []
+            for key, item in p.items():
+                all_miss = np.array([float(i) for i in list(item.keys())])
+                best_per_sample.append(item[str(np.min(all_miss))])   ### messed that one up.
+            filter_out = []
+            for key, item in p.items():
+                for k, i in item.items():
+                    if not i in best_per_sample:
+                        filter_out.append(i)
+            with open(output.bad_dups, "w") as handle:
+                handle.write("\n".join(filter_out))
+
+
+
+rule filter_out_dups:
+    input:
+        vcf = os.path.join(config["main_folder"],"{sample}","stripes_input", "all_{sample}_only_founder_snps.vcf.bgz"),
+        bad_dups = os.path.join(config["main_folder"],"{sample}","stripes_input", "bad_duplicates_{sample}.txt")
+    output:
+        filtered_vcf = temp(os.path.join(config["main_folder"],"{sample}","stripes_input", "all_{sample}_only_founder_snps_NoDuplicates.vcf"))
+    run:
+        import subprocess
+        a = os.stat(input.bad_dups).st_size==0
+        if a == True: # if file is empty
+            subprocess.call(["cp", input.vcf, output.filtered_vcf]) # merely copy over
+        else:
+            subprocess.call(["bcftools", "view", "--samples-file", "^{}".format(input.bad_dups), "-Ov",input.vcf, "-o", output.filtered_vcf])
+
+
+
+rule rename_samples:
+    input:
+        vcf = temp(os.path.join(config["main_folder"],"{sample}","stripes_input", "all_{sample}_only_founder_snps_NoDuplicates.vcf"))
+    output:
+        new_ids = os.path.join(config["main_folder"],"{sample}","stripes_input", "new_ids_{sample}.txt"),
+        renamed_vcf = os.path.join(config["main_folder"],"{sample}","stripes_input", "all_{sample}_only_founder_snps_NoDuplicates_NewNames.vcf")
+    params:
+        threads = 4,
+        generation = "{sample}"
+    run:
+        from cyvcf2 import VCF
+        import subprocess
+        #make sure the generation has the right format
+        gen = params.generation
+        gen = gen.strip("F")
+        print(gen)
+        if len(str(gen))==1:
+            gen = "0"+str(gen)
+        else:
+            gen = str(gen)
+
+        vcf = VCF(input.vcf, threads=params.threads)
+        samples = vcf.samples
+        sample_ids = []
+        for s in samples:
+            s2 = s.rsplit("/",1)[1]
+            s3 = s2.split("_")
+            if s3[0].startswith("F") == True: # ugh, why dont all files follow the same naming convention.
+                sample_ids.append(s3[1]+gen)
+            else:
+                sample_ids.append(s3[0]+gen)
+
+        with open(output.new_ids, "w") as handle:
+            handle.write("\n".join(sample_ids))
+        subprocess.call(["bcftools", "reheader", "--samples", output.new_ids, "-o", output.renamed_vcf, input.vcf])

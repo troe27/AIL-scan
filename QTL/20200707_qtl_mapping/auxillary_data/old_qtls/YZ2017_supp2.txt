@@ -1,0 +1,17 @@
+#Supplementary Table S2. The 11 SNP markers that are associated with 56-day body-weight,
+#and located outside the nine fine-mapped QTL regions, in generation F15 of the Advanced
+#Intercross Line between founders from generation 40 of the High- (HWS) and Low (LWS)
+#body-weight selected Virginia chicken lines.
+
+GGA Pos Marker Freq_HWS/LWS40 a_SEd P_value RMIP_5/20% Sign
+1 33147325 rs13847968 0.68/0* -6.0±6.2 3.0e-1 0.33/0.46 0.20
+1 87189315 rs13899455 1/0.08 -15.8±5.7 3.3e-03 0.53/0.64 0.05
+1 132884851 rs13942473 0.95/0 14.3±7.0 2.6e-02 0.57/0.70 0.05
+2 148418221 rs15158686 1/0 24.0±5.8 4.3e-06 0.66/0.76 0.05
+4 69059781 rs314510951 1/0 		9.6±5.4 5.1e-02 0.37/0.53 0.20
+4 82310849 rs14498744 1/0 -21.2±5.9 7.7e-05 0.74/0.85 0.05
+6 3292946 rs13562096 1/0 12.7±5.9 3.4e-05 0.60/0.70 0.05
+6 3417847 rs15758084 1/0 1.9±5.9 5.0e-04 0.60/0.70 0.05
+10 8504427 rs312978808 1/0 10.6±5.6 2.9e-02 0.40/0.58 0.20
+13 5988992 rs13726878 0.95/0 14.7±5.9 7.4e-03 0.46/0.62 0.20
+23 4599103 rs15205573 1/0.09 15.1±6.2 7.2e-03 0.58/0.76 0.05

@@ -1,0 +1,14 @@
+reference:
+    /home/tilman/storage/ref_gg6a/GCF_000002315.5_GRCg6a_genomic.fna.gz
+    
+Raw_Folder:
+    /home/tilman/storage/F18/fastq  
+Data_Folder:
+    /home/tilman/storage/F18/data
+
+founders:
+    /home/tilman/storage2/all_GQ20_MQ50_noIndels_callrate0.3.vcf    
+
+bcftools:
+    /home/tilman/miniconda3/envs/v3/bin/bcftools    
+

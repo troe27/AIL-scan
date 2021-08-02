@@ -1,0 +1,907 @@
+
+% Default to the notebook output style
+
+    
+
+
+% Inherit from the specified cell style.
+
+
+
+
+    
+\documentclass[11pt]{article}
+
+    
+    
+    \usepackage[T1]{fontenc}
+    % Nicer default font (+ math font) than Computer Modern for most use cases
+    \usepackage{mathpazo}
+
+    % Basic figure setup, for now with no caption control since it's done
+    % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
+    \usepackage{graphicx}
+    % We will generate all images so they have a width \maxwidth. This means
+    % that they will get their normal width if they fit onto the page, but
+    % are scaled down if they would overflow the margins.
+    \makeatletter
+    \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth
+    \else\Gin@nat@width\fi}
+    \makeatother
+    \let\Oldincludegraphics\includegraphics
+    % Set max figure width to be 80% of text width, for now hardcoded.
+    \renewcommand{\includegraphics}[1]{\Oldincludegraphics[width=.8\maxwidth]{#1}}
+    % Ensure that by default, figures have no caption (until we provide a
+    % proper Figure object with a Caption API and a way to capture that
+    % in the conversion process - todo).
+    \usepackage{caption}
+    \DeclareCaptionLabelFormat{nolabel}{}
+    \captionsetup{labelformat=nolabel}
+
+    \usepackage{adjustbox} % Used to constrain images to a maximum size 
+    \usepackage{xcolor} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage{textcomp} % defines textquotesingle
+    % Hack from http://tex.stackexchange.com/a/47451/13684:
+    \AtBeginDocument{%
+        \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
+    }
+    \usepackage{upquote} % Upright quotes for verbatim code
+    \usepackage{eurosym} % defines \euro
+    \usepackage[mathletters]{ucs} % Extended unicode (utf-8) support
+    \usepackage[utf8x]{inputenc} % Allow utf-8 characters in the tex document
+    \usepackage{fancyvrb} % verbatim replacement that allows latex
+    \usepackage{grffile} % extends the file name processing of package graphics 
+                         % to support a larger range 
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    \usepackage{longtable} % longtable support required by pandoc >1.10
+    \usepackage{booktabs}  % table support for pandoc > 1.12.2
+    \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
+    \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                                % normalem makes italics be italics, not underlines
+    
+
+    
+    
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
+    % ANSI colors
+    \definecolor{ansi-black}{HTML}{3E424D}
+    \definecolor{ansi-black-intense}{HTML}{282C36}
+    \definecolor{ansi-red}{HTML}{E75C58}
+    \definecolor{ansi-red-intense}{HTML}{B22B31}
+    \definecolor{ansi-green}{HTML}{00A250}
+    \definecolor{ansi-green-intense}{HTML}{007427}
+    \definecolor{ansi-yellow}{HTML}{DDB62B}
+    \definecolor{ansi-yellow-intense}{HTML}{B27D12}
+    \definecolor{ansi-blue}{HTML}{208FFB}
+    \definecolor{ansi-blue-intense}{HTML}{0065CA}
+    \definecolor{ansi-magenta}{HTML}{D160C4}
+    \definecolor{ansi-magenta-intense}{HTML}{A03196}
+    \definecolor{ansi-cyan}{HTML}{60C6C8}
+    \definecolor{ansi-cyan-intense}{HTML}{258F8F}
+    \definecolor{ansi-white}{HTML}{C5C1B4}
+    \definecolor{ansi-white-intense}{HTML}{A1A6B2}
+
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    \providecommand{\tightlist}{%
+      \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    % Add ',fontsize=\small' for more characters per line
+    \newenvironment{Shaded}{}{}
+    \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    \newcommand{\RegionMarkerTok}[1]{{#1}}
+    \newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\NormalTok}[1]{{#1}}
+    
+    % Additional commands for more recent versions of Pandoc
+    \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+    \newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+    \newcommand{\ImportTok}[1]{{#1}}
+    \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+    \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+    \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+    \newcommand{\BuiltInTok}[1]{{#1}}
+    \newcommand{\ExtensionTok}[1]{{#1}}
+    \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+    \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+    \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    
+    
+    % Define a nice break command that doesn't care if a line doesn't already
+    % exist.
+    \def\br{\hspace*{\fill} \\* }
+    % Math Jax compatability definitions
+    \def\gt{>}
+    \def\lt{<}
+    % Document parameters
+    \title{rqtl\_all\_new}
+    
+    
+    
+
+    % Pygments definitions
+    
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\expandafter\def\csname PY@tok@w\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\expandafter\def\csname PY@tok@c\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.74,0.48,0.00}{##1}}}
+\expandafter\def\csname PY@tok@k\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kt\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\expandafter\def\csname PY@tok@o\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@ow\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\expandafter\def\csname PY@tok@nb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nf\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@nc\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@nn\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@ne\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.82,0.25,0.23}{##1}}}
+\expandafter\def\csname PY@tok@nv\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@no\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nl\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.63,0.63,0.00}{##1}}}
+\expandafter\def\csname PY@tok@ni\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.60,0.60,0.60}{##1}}}
+\expandafter\def\csname PY@tok@na\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.49,0.56,0.16}{##1}}}
+\expandafter\def\csname PY@tok@nt\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nd\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\expandafter\def\csname PY@tok@s\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sd\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@si\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\expandafter\def\csname PY@tok@se\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sr\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\expandafter\def\csname PY@tok@ss\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@sx\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@m\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@gh\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@gu\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@gd\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@gi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.63,0.00}{##1}}}
+\expandafter\def\csname PY@tok@gr\endcsname{\def\PY@tc##1{\textcolor[rgb]{1.00,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@ge\endcsname{\let\PY@it=\textit}
+\expandafter\def\csname PY@tok@gs\endcsname{\let\PY@bf=\textbf}
+\expandafter\def\csname PY@tok@gp\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@go\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.53,0.53,0.53}{##1}}}
+\expandafter\def\csname PY@tok@gt\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\expandafter\def\csname PY@tok@err\endcsname{\def\PY@bc##1{\setlength{\fboxsep}{0pt}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}
+\expandafter\def\csname PY@tok@kc\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kd\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kn\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kr\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@bp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@fm\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@vc\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@vg\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@vi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@vm\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@sa\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sc\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@dl\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@s2\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sh\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@s1\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@mb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mf\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mh\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@il\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mo\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@ch\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cm\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cpf\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@c1\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cs\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+    % Exact colors from NB
+    \definecolor{incolor}{rgb}{0.0, 0.0, 0.5}
+    \definecolor{outcolor}{rgb}{0.545, 0.0, 0.0}
+
+
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy 
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+      }
+    % Slightly bigger margins than the latex defaults
+    
+    \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    
+    
+
+    \begin{document}
+    
+    
+    \maketitle
+    
+    
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}1}]:} \PY{k+kn}{library}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{data.table\PYZdq{}}\PY{p}{)}
+        \PY{k+kn}{library}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{qtl\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}2}]:} datf2 \PY{o}{\PYZlt{}\PYZhy{}} read.cross\PY{p}{(}format \PY{o}{=} \PY{l+s}{\PYZdq{}}\PY{l+s}{csvs\PYZdq{}}\PY{p}{,}
+                            genotypes \PY{o}{=} \PY{k+kt}{c}\PY{p}{(}\PY{l+m}{\PYZhy{}1}\PY{p}{,}\PY{l+m}{0}\PY{p}{,}\PY{l+m}{1}\PY{p}{,}\PY{l+s}{\PYZdq{}}\PY{l+s}{C\PYZdq{}}\PY{p}{,}\PY{l+s}{\PYZdq{}}\PY{l+s}{D\PYZdq{}}\PY{p}{)}\PY{p}{,}
+                            dir \PY{o}{=} \PY{l+s}{\PYZdq{}}\PY{l+s}{./new\PYZus{}subsets\PYZdq{}}\PY{p}{,}
+                            genfile\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{20190827\PYZus{}rqtl\PYZus{}all\PYZus{}geno.csv\PYZdq{}}\PY{p}{,}
+                            phefile \PY{o}{=} \PY{l+s}{\PYZdq{}}\PY{l+s}{20190827\PYZus{}rqtl\PYZus{}all\PYZus{}pheno.csv\PYZdq{}} \PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+ --Read the following data:
+	 3055  individuals
+	 1013  markers
+	 7  phenotypes
+ --Cross type: f2 
+
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}3}]:} \PY{k+kp}{summary}\PY{p}{(}datf2\PY{p}{)}
+\end{Verbatim}
+
+
+    
+    \begin{verbatim}
+    F2 intercross
+
+    No. individuals:    3055 
+
+    No. phenotypes:     7 
+    Percent phenotyped: 100 98.1 98.1 100 100 100 100 
+
+    No. chromosomes:    24 
+        Autosomes:      1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 
+                        23 24 
+
+    Total markers:      1013 
+    No. markers:        198 150 111 92 82 60 37 37 31 25 21 21 20 20 17 14 13 12 
+                        11 11 8 8 7 7 
+    Percent genotyped:  79.7 
+    Genotypes (%):      AA:26.7  AB:46.9  BB:26.4  not BB:0.0  not AA:0.0 
+    \end{verbatim}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}5}]:} plotMissing\PY{p}{(}datf2\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_3_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}6}]:} par\PY{p}{(}mfrow\PY{o}{=}\PY{k+kt}{c}\PY{p}{(}\PY{l+m}{1}\PY{p}{,}\PY{l+m}{2}\PY{p}{)}\PY{p}{,} las\PY{o}{=}\PY{l+m}{1}\PY{p}{)}
+        plot\PY{p}{(}ntyped\PY{p}{(}datf2\PY{p}{)}\PY{p}{,} ylab\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{No. typed markers\PYZdq{}}\PY{p}{,} main\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{No. genotypes by individual\PYZdq{}}\PY{p}{)}
+        plot\PY{p}{(}ntyped\PY{p}{(}datf2\PY{p}{,} \PY{l+s}{\PYZdq{}}\PY{l+s}{mar\PYZdq{}}\PY{p}{)}\PY{p}{,} ylab\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{No. typed individuals\PYZdq{}}\PY{p}{,} main\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{No. genotypes by marker\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_4_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}7}]:} nt.bymar \PY{o}{\PYZlt{}\PYZhy{}} ntyped\PY{p}{(}datf2\PY{p}{,} \PY{l+s}{\PYZdq{}}\PY{l+s}{mar\PYZdq{}}\PY{p}{)}
+        todrop \PY{o}{\PYZlt{}\PYZhy{}} \PY{k+kp}{names}\PY{p}{(}nt.bymar\PY{p}{[}nt.bymar \PY{o}{\PYZlt{}} \PY{l+m}{500}\PY{p}{]}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}8}]:} todrop
+\end{Verbatim}
+
+
+    
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}9}]:} datf2.1 \PY{o}{\PYZlt{}\PYZhy{}} drop.markers\PY{p}{(}datf2\PY{p}{,} todrop\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}10}]:} par\PY{p}{(}mfrow\PY{o}{=}\PY{k+kt}{c}\PY{p}{(}\PY{l+m}{1}\PY{p}{,}\PY{l+m}{2}\PY{p}{)}\PY{p}{,} las\PY{o}{=}\PY{l+m}{1}\PY{p}{)}
+         plot\PY{p}{(}ntyped\PY{p}{(}datf2.1\PY{p}{)}\PY{p}{,} ylab\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{No. typed markers\PYZdq{}}\PY{p}{,} main\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{No. genotypes by individual\PYZdq{}}\PY{p}{)} 
+         plot\PY{p}{(}ntyped\PY{p}{(}datf2.1\PY{p}{,} \PY{l+s}{\PYZdq{}}\PY{l+s}{mar\PYZdq{}}\PY{p}{)}\PY{p}{,} ylab\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{No. typed individuals\PYZdq{}}\PY{p}{,}main\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{No. genotypes by marker\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_8_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}11}]:} datf2.2 \PY{o}{\PYZlt{}\PYZhy{}} \PY{k+kp}{subset}\PY{p}{(}datf2.1\PY{p}{,} ind\PY{o}{=}\PY{p}{(}ntyped\PY{p}{(}datf2.1\PY{p}{)}\PY{o}{\PYZgt{}}\PY{l+m}{100}\PY{p}{)}\PY{p}{)} \PY{c+c1}{\PYZsh{} removing all individuals that have less than 10\PYZpc{} of all markers}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}12}]:} \PY{k+kp}{length}\PY{p}{(}ntyped\PY{p}{(}datf2.1\PY{p}{,} \PY{l+s}{\PYZdq{}}\PY{l+s}{ind\PYZdq{}}\PY{p}{)}\PY{p}{)}
+         \PY{k+kp}{length}\PY{p}{(}ntyped\PY{p}{(}datf2.2\PY{p}{,} \PY{l+s}{\PYZdq{}}\PY{l+s}{ind\PYZdq{}}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+
+
+    3055
+
+    
+    3055
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}13}]:} par\PY{p}{(}mfrow\PY{o}{=}\PY{k+kt}{c}\PY{p}{(}\PY{l+m}{1}\PY{p}{,}\PY{l+m}{2}\PY{p}{)}\PY{p}{,} las\PY{o}{=}\PY{l+m}{1}\PY{p}{)}
+         plot\PY{p}{(}ntyped\PY{p}{(}datf2.2\PY{p}{)}\PY{p}{,} ylab\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{No. typed markers\PYZdq{}}\PY{p}{,} main\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{No. genotypes by individual\PYZdq{}}\PY{p}{)} 
+         plot\PY{p}{(}ntyped\PY{p}{(}datf2.2\PY{p}{,} \PY{l+s}{\PYZdq{}}\PY{l+s}{mar\PYZdq{}}\PY{p}{)}\PY{p}{,} ylab\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{No. typed individuals\PYZdq{}}\PY{p}{,}main\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{No. genotypes by marker\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_11_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}14}]:} \PY{k+kp}{summary}\PY{p}{(}datf2.2\PY{p}{)}
+\end{Verbatim}
+
+
+    
+    \begin{verbatim}
+    F2 intercross
+
+    No. individuals:    3055 
+
+    No. phenotypes:     7 
+    Percent phenotyped: 100 98.1 98.1 100 100 100 100 
+
+    No. chromosomes:    24 
+        Autosomes:      1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 
+                        23 24 
+
+    Total markers:      1013 
+    No. markers:        198 150 111 92 82 60 37 37 31 25 21 21 20 20 17 14 13 12 
+                        11 11 8 8 7 7 
+    Percent genotyped:  79.7 
+    Genotypes (%):      AA:26.7  AB:46.9  BB:26.4  not BB:0.0  not AA:0.0 
+    \end{verbatim}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}15}]:} cg \PY{o}{\PYZlt{}\PYZhy{}} comparegeno\PY{p}{(}datf2.2\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}16}]:} hist\PY{p}{(}cg\PY{p}{[}\PY{k+kp}{lower.tri}\PY{p}{(}cg\PY{p}{)}\PY{p}{]}\PY{p}{,} breaks\PY{o}{=}\PY{k+kp}{seq}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{1}\PY{p}{,} len\PY{o}{=}\PY{l+m}{101}\PY{p}{)}\PY{p}{,} xlab\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{No. matching genotypes\PYZdq{}}\PY{p}{)} 
+         rug\PY{p}{(}cg\PY{p}{[}\PY{k+kp}{lower.tri}\PY{p}{(}cg\PY{p}{)}\PY{p}{]}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_14_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}17}]:} wh \PY{o}{\PYZlt{}\PYZhy{}} \PY{k+kp}{which}\PY{p}{(}cg \PY{o}{\PYZgt{}} \PY{l+m}{0.9}\PY{p}{,} arr\PY{o}{=}\PY{k+kc}{TRUE}\PY{p}{)}
+         wh \PY{o}{\PYZlt{}\PYZhy{}} wh\PY{p}{[}wh\PY{p}{[}\PY{p}{,}\PY{l+m}{1}\PY{p}{]} \PY{o}{\PYZlt{}} wh\PY{p}{[}\PY{p}{,}\PY{l+m}{2}\PY{p}{]}\PY{p}{,}\PY{p}{]}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}18}]:} wh
+\end{Verbatim}
+
+
+    \begin{tabular}{ll}
+ row & col\\
+\hline
+	   3  &  771\\
+	 541  & 1957\\
+	 380  & 2237\\
+	 641  & 2279\\
+\end{tabular}
+
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}19}]:} \PY{k+kp}{print}\PY{p}{(}dup \PY{o}{\PYZlt{}\PYZhy{}} findDupMarkers\PY{p}{(}datf2.2\PY{p}{,} exact.only\PY{o}{=}\PY{k+kc}{FALSE}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+\$`8-15`
+[1] "8-16"
+
+
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}20}]:} gt \PY{o}{\PYZlt{}\PYZhy{}} geno.table\PY{p}{(}datf2.2\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Warning message in getsex(cross):
+"Sex column should be coded as 0=female 1=male; sex ignored."
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}21}]:} gt\PY{p}{[}gt\PY{o}{\PYZdl{}}P.value \PY{o}{\PYZlt{}} \PY{l+m}{0.05}\PY{o}{/}totmar\PY{p}{(}datf2.2\PY{p}{)}\PY{p}{,}\PY{p}{]}
+         todrop \PY{o}{\PYZlt{}\PYZhy{}} \PY{k+kp}{rownames}\PY{p}{(}gt\PY{p}{[}gt\PY{o}{\PYZdl{}}P.value \PY{o}{\PYZlt{}} \PY{l+m}{0.05}\PY{o}{/}totmar\PY{p}{(}datf2.2\PY{p}{)}\PY{p}{,}\PY{p}{]}\PY{p}{)}
+         datf2.3 \PY{o}{\PYZlt{}\PYZhy{}} drop.markers\PY{p}{(}datf2.2\PY{p}{,} todrop\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{tabular}{r|llllllll}
+  & chr & missing & AA & AB & BB & not.BB & not.AA & P.value\\
+\hline
+	1-2 & 1            &  458         &  441         & 1314         &  842         & 0            & 0            & 1.069075e-27\\
+	1-3 & 1            &  156         &  495         & 1412         &  992         & 0            & 0            & 3.755319e-38\\
+	1-4 & 1            &  101         &  541         & 1393         & 1020         & 0            & 0            & 1.559740e-36\\
+	1-5 & 1            &  334         &  526         & 1343         &  852         & 0            & 0            & 8.703552e-18\\
+	1-6 & 1            &  403         &  513         & 1318         &  821         & 0            & 0            & 2.779739e-16\\
+	1-7 & 1            &  407         &  514         & 1312         &  822         & 0            & 0            & 2.478929e-16\\
+	1-8 & 1            &  453         &  521         & 1276         &  805         & 0            & 0            & 2.134212e-14\\
+	1-9 & 1            &  440         &  537         & 1275         &  803         & 0            & 0            & 7.909171e-13\\
+	1-14 & 1            &  398         &  544         & 1332         &  781         & 0            & 0            & 6.531408e-10\\
+	1-24 & 1            &  237         &  802         & 1409         &  607         & 0            & 0            & 1.379744e-06\\
+	1-33 & 1            &  438         &  721         & 1333         &  563         & 0            & 0            & 4.549544e-05\\
+	1-46 & 1            &  362         &  772         & 1320         &  601         & 0            & 0            & 1.142521e-05\\
+	1-47 & 1            &  237         &  829         & 1386         &  603         & 0            & 0            & 9.234172e-09\\
+	1-59 & 1            &  184         &  652         & 1402         &  817         & 0            & 0            & 3.484705e-05\\
+	1-60 & 1            &  234         &  651         & 1351         &  819         & 0            & 0            & 3.671580e-06\\
+	1-65 & 1            &  323         &  632         & 1278         &  822         & 0            & 0            & 6.299033e-09\\
+	1-66 & 1            & 1063         &  448         &  950         &  594         & 0            & 0            & 2.691798e-06\\
+	1-70 & 1            &  347         &  637         & 1273         &  798         & 0            & 0            & 5.476380e-07\\
+	1-71 & 1            &  413         &  610         & 1263         &  769         & 0            & 0            & 5.474318e-06\\
+	1-75 & 1            &  210         &  758         & 1488         &  599         & 0            & 0            & 6.776099e-06\\
+	1-76 & 1            &  228         &  765         & 1473         &  589         & 0            & 0            & 1.424347e-06\\
+	1-77 & 1            &  129         &  790         & 1556         &  580         & 0            & 0            & 7.707976e-10\\
+	1-78 & 1            &  305         &  776         & 1419         &  555         & 0            & 0            & 4.734623e-09\\
+	1-79 & 1            &  259         &  800         & 1440         &  556         & 0            & 0            & 1.601230e-10\\
+	1-80 & 1            &  316         &  805         & 1387         &  547         & 0            & 0            & 2.231143e-11\\
+	1-81 & 1            &  321         &  821         & 1365         &  548         & 0            & 0            & 1.444895e-12\\
+	1-82 & 1            &  314         &  827         & 1369         &  545         & 0            & 0            & 2.507272e-13\\
+	1-83 & 1            &  221         &  941         & 1368         &  525         & 0            & 0            & 5.549665e-28\\
+	1-84 & 1            &  269         & 1096         & 1221         &  469         & 0            & 0            & 3.117922e-71\\
+	1-85 & 1            &  268         & 1093         & 1219         &  475         & 0            & 0            & 9.891235e-70\\
+	... & ... & ... & ... & ... & ... & ... & ... & ...\\
+	20-10 & 20            & 1171          & 408           & 1041          &  435          & 0             & 0             &  2.057567e-05\\
+	20-11 & 20            & 1445          & 324           &  950          &  336          & 0             & 0             &  4.151907e-12\\
+	21-1 & 21            &  196          & 556           & 1578          &  725          & 0             & 0             &  9.157899e-12\\
+	21-2 & 21            &  174          & 559           & 1588          &  734          & 0             & 0             &  6.670993e-12\\
+	21-3 & 21            &  255          & 557           & 1489          &  754          & 0             & 0             &  3.336931e-09\\
+	21-4 & 21            &  302          & 546           & 1440          &  767          & 0             & 0             &  1.054331e-09\\
+	21-5 & 21            &  511          & 483           & 1364          &  697          & 0             & 0             &  1.959669e-11\\
+	21-7 & 21            &  451          & 691           & 1379          &  534          & 0             & 0             &  8.154015e-07\\
+	21-8 & 21            &  185          & 768           & 1516          &  586          & 0             & 0             &  1.004517e-07\\
+	22-1 & 22            &  241          & 469           & 1549          &  796          & 0             & 0             &  1.876338e-23\\
+	22-2 & 22            &  190          & 470           & 1587          &  808          & 0             & 0             &  2.788586e-25\\
+	22-3 & 22            &  221          & 479           & 1573          &  782          & 0             & 0             &  2.965383e-22\\
+	22-4 & 22            &  288          & 497           & 1585          &  685          & 0             & 0             &  5.094837e-19\\
+	22-5 & 22            &  351          & 481           & 1580          &  643          & 0             & 0             &  1.220135e-21\\
+	22-6 & 22            &  827          & 362           & 1435          &  431          & 0             & 0             &  7.966701e-42\\
+	22-7 & 22            &  352          & 436           & 1835          &  432          & 0             & 0             &  7.524089e-76\\
+	22-8 & 22            &  187          & 529           & 1863          &  476          & 0             & 0             &  6.868309e-57\\
+	23-2 & 23            &  404          & 939           &  756          &  956          & 0             & 0             & 4.866507e-107\\
+	23-3 & 23            &  531          & 889           &  744          &  891          & 0             & 0             &  4.575712e-93\\
+	23-4 & 23            &  538          & 868           &  763          &  886          & 0             & 0             &  1.651060e-85\\
+	23-5 & 23            &  641          & 756           &  715          &  943          & 0             & 0             &  4.083518e-94\\
+	23-6 & 23            &  633          & 670           &  799          &  953          & 0             & 0             &  5.816574e-76\\
+	23-7 & 23            &  422          & 786           &  767          & 1080          & 0             & 0             & 1.361261e-114\\
+	24-1 & 24            & 2182          & 406           &   10          &  457          & 0             & 0             & 5.283536e-183\\
+	24-2 & 24            & 2193          & 387           &   12          &  463          & 0             & 0             & 1.538048e-180\\
+	24-3 & 24            & 2192          & 394           &   10          &  459          & 0             & 0             & 1.150779e-181\\
+	24-4 & 24            & 2217          & 393           &   32          &  413          & 0             & 0             & 3.603961e-156\\
+	24-5 & 24            & 2206          & 421           &   15          &  413          & 0             & 0             & 2.557980e-172\\
+	24-6 & 24            & 2187          & 442           &   10          &  416          & 0             & 0             & 5.804800e-181\\
+	24-7 & 24            & 2179          & 434           &   11          &  431          & 0             & 0             & 1.618293e-181\\
+\end{tabular}
+
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}22}]:} \PY{k+kp}{length}\PY{p}{(}todrop\PY{p}{)}
+\end{Verbatim}
+
+
+    569
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}23}]:} datf2.3 \PY{o}{\PYZlt{}\PYZhy{}} datf2.2
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}24}]:} g \PY{o}{\PYZlt{}\PYZhy{}} pull.geno\PY{p}{(}datf2.2\PY{p}{)}
+         gfreq \PY{o}{\PYZlt{}\PYZhy{}} \PY{k+kp}{apply}\PY{p}{(}g\PY{p}{,} \PY{l+m}{1}\PY{p}{,} \PY{k+kr}{function}\PY{p}{(}a\PY{p}{)} \PY{k+kp}{table}\PY{p}{(}\PY{k+kp}{factor}\PY{p}{(}a\PY{p}{,} levels\PY{o}{=}\PY{l+m}{1}\PY{o}{:}\PY{l+m}{3}\PY{p}{)}\PY{p}{)}\PY{p}{)}
+         gfreq \PY{o}{\PYZlt{}\PYZhy{}} \PY{k+kp}{t}\PY{p}{(}\PY{k+kp}{t}\PY{p}{(}gfreq\PY{p}{)} \PY{o}{/} \PY{k+kp}{colSums}\PY{p}{(}gfreq\PY{p}{)}\PY{p}{)}
+         par\PY{p}{(}mfrow\PY{o}{=}\PY{k+kt}{c}\PY{p}{(}\PY{l+m}{1}\PY{p}{,}\PY{l+m}{3}\PY{p}{)}\PY{p}{,} las\PY{o}{=}\PY{l+m}{1}\PY{p}{)}
+         \PY{k+kr}{for}\PY{p}{(}i \PY{k+kr}{in} \PY{l+m}{1}\PY{o}{:}\PY{l+m}{3}\PY{p}{)} plot\PY{p}{(}gfreq\PY{p}{[}i\PY{p}{,}\PY{p}{]}\PY{p}{,} ylab\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Genotype frequency\PYZdq{}}\PY{p}{,} main\PY{o}{=}\PY{k+kt}{c}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{AA\PYZdq{}}\PY{p}{,} \PY{l+s}{\PYZdq{}}\PY{l+s}{AB\PYZdq{}}\PY{p}{,} \PY{l+s}{\PYZdq{}}\PY{l+s}{BB\PYZdq{}}\PY{p}{)}\PY{p}{[}i\PY{p}{]}\PY{p}{,} ylim\PY{o}{=}\PY{k+kt}{c}\PY{p}{(}\PY{l+m}{0}\PY{p}{,}\PY{l+m}{1}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_22_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor} }]:} g \PY{o}{\PYZlt{}\PYZhy{}} pull.geno\PY{p}{(}datf2.3\PY{p}{)}
+        gfreq \PY{o}{\PYZlt{}\PYZhy{}} \PY{k+kp}{apply}\PY{p}{(}g\PY{p}{,} \PY{l+m}{1}\PY{p}{,} \PY{k+kr}{function}\PY{p}{(}a\PY{p}{)} \PY{k+kp}{table}\PY{p}{(}\PY{k+kp}{factor}\PY{p}{(}a\PY{p}{,} levels\PY{o}{=}\PY{l+m}{1}\PY{o}{:}\PY{l+m}{3}\PY{p}{)}\PY{p}{)}\PY{p}{)}
+        gfreq \PY{o}{\PYZlt{}\PYZhy{}} \PY{k+kp}{t}\PY{p}{(}\PY{k+kp}{t}\PY{p}{(}gfreq\PY{p}{)} \PY{o}{/} \PY{k+kp}{colSums}\PY{p}{(}gfreq\PY{p}{)}\PY{p}{)}
+        par\PY{p}{(}mfrow\PY{o}{=}\PY{k+kt}{c}\PY{p}{(}\PY{l+m}{1}\PY{p}{,}\PY{l+m}{3}\PY{p}{)}\PY{p}{,} las\PY{o}{=}\PY{l+m}{1}\PY{p}{)}
+        \PY{k+kr}{for}\PY{p}{(}i \PY{k+kr}{in} \PY{l+m}{1}\PY{o}{:}\PY{l+m}{3}\PY{p}{)} plot\PY{p}{(}gfreq\PY{p}{[}i\PY{p}{,}\PY{p}{]}\PY{p}{,} ylab\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Genotype frequency\PYZdq{}}\PY{p}{,} main\PY{o}{=}\PY{k+kt}{c}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{AA\PYZdq{}}\PY{p}{,} \PY{l+s}{\PYZdq{}}\PY{l+s}{AB\PYZdq{}}\PY{p}{,} \PY{l+s}{\PYZdq{}}\PY{l+s}{BB\PYZdq{}}\PY{p}{)}\PY{p}{[}i\PY{p}{]}\PY{p}{,} ylim\PY{o}{=}\PY{k+kt}{c}\PY{p}{(}\PY{l+m}{0}\PY{p}{,}\PY{l+m}{1}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}25}]:} id\PYZus{}gtfreq \PY{o}{\PYZlt{}\PYZhy{}} \PY{k+kp}{which}\PY{p}{(}gfreq\PY{p}{[}\PY{l+m}{1}\PY{p}{,}\PY{p}{]}\PY{o}{\PYZlt{}}\PY{l+m}{0.5} \PY{o}{\PYZam{}} gfreq\PY{p}{[}\PY{l+m}{2}\PY{p}{,}\PY{p}{]}\PY{o}{\PYZlt{}}\PY{l+m}{0.65} \PY{o}{\PYZam{}} gfreq\PY{p}{[}\PY{l+m}{2}\PY{p}{,}\PY{p}{]}\PY{o}{\PYZgt{}}\PY{l+m}{0.35} \PY{o}{\PYZam{}} gfreq\PY{p}{[}\PY{l+m}{3}\PY{p}{,}\PY{p}{]}\PY{o}{\PYZlt{}}\PY{l+m}{0.5}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor} }]:} datf2.4 \PY{o}{\PYZlt{}\PYZhy{}} \PY{k+kp}{subset}\PY{p}{(}datf2.3\PY{p}{,} ind\PY{o}{=}\PY{p}{(}id\PYZus{}gtfreq\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}26}]:} datf2.4 \PY{o}{\PYZlt{}\PYZhy{}} datf2.3
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}27}]:} g \PY{o}{\PYZlt{}\PYZhy{}} pull.geno\PY{p}{(}datf2.4\PY{p}{)}
+         gfreq \PY{o}{\PYZlt{}\PYZhy{}} \PY{k+kp}{apply}\PY{p}{(}g\PY{p}{,} \PY{l+m}{1}\PY{p}{,} \PY{k+kr}{function}\PY{p}{(}a\PY{p}{)} \PY{k+kp}{table}\PY{p}{(}\PY{k+kp}{factor}\PY{p}{(}a\PY{p}{,} levels\PY{o}{=}\PY{l+m}{1}\PY{o}{:}\PY{l+m}{3}\PY{p}{)}\PY{p}{)}\PY{p}{)}
+         gfreq \PY{o}{\PYZlt{}\PYZhy{}} \PY{k+kp}{t}\PY{p}{(}\PY{k+kp}{t}\PY{p}{(}gfreq\PY{p}{)} \PY{o}{/} \PY{k+kp}{colSums}\PY{p}{(}gfreq\PY{p}{)}\PY{p}{)}
+         par\PY{p}{(}mfrow\PY{o}{=}\PY{k+kt}{c}\PY{p}{(}\PY{l+m}{1}\PY{p}{,}\PY{l+m}{3}\PY{p}{)}\PY{p}{,} las\PY{o}{=}\PY{l+m}{1}\PY{p}{)}
+         \PY{k+kr}{for}\PY{p}{(}i \PY{k+kr}{in} \PY{l+m}{1}\PY{o}{:}\PY{l+m}{3}\PY{p}{)} plot\PY{p}{(}gfreq\PY{p}{[}i\PY{p}{,}\PY{p}{]}\PY{p}{,} ylab\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Genotype frequency\PYZdq{}}\PY{p}{,} main\PY{o}{=}\PY{k+kt}{c}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{AA\PYZdq{}}\PY{p}{,} \PY{l+s}{\PYZdq{}}\PY{l+s}{AB\PYZdq{}}\PY{p}{,} \PY{l+s}{\PYZdq{}}\PY{l+s}{BB\PYZdq{}}\PY{p}{)}\PY{p}{[}i\PY{p}{]}\PY{p}{,} ylim\PY{o}{=}\PY{k+kt}{c}\PY{p}{(}\PY{l+m}{0}\PY{p}{,}\PY{l+m}{1}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_27_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}28}]:} datf2.4 \PY{o}{\PYZlt{}\PYZhy{}} est.rf\PY{p}{(}datf2.4\PY{p}{)}
+         datf2.4\PYZus{}tst \PY{o}{\PYZlt{}\PYZhy{}} markerlrt\PY{p}{(}datf2.4\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}29}]:} rf \PY{o}{\PYZlt{}\PYZhy{}} pull.rf\PY{p}{(}datf2.4\PY{p}{)}
+         lod \PY{o}{\PYZlt{}\PYZhy{}} pull.rf\PY{p}{(}datf2.4\PY{p}{,} what\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{lod\PYZdq{}}\PY{p}{)}
+         plot\PY{p}{(}\PY{k+kp}{as.numeric}\PY{p}{(}rf\PY{p}{)}\PY{p}{,} \PY{k+kp}{as.numeric}\PY{p}{(}lod\PY{p}{)}\PY{p}{,} xlab\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Recombination fraction\PYZdq{}}\PY{p}{,} ylab\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{LOD score\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_29_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}30}]:} plotRF\PY{p}{(}datf2.4\PY{p}{,} alternate.chrid\PY{o}{=}\PY{k+kc}{TRUE}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_30_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor} }]:} genmap \PY{o}{\PYZlt{}\PYZhy{}} est.map\PY{p}{(}datf2.4\PY{p}{,} error.prob\PY{o}{=}\PY{l+m}{0.005}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor} }]:} summaryMap\PY{p}{(}genmap\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor} }]:} plotMap\PY{p}{(}genmap\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor} }]:} datf2.4 \PY{o}{\PYZlt{}\PYZhy{}} replace.map\PY{p}{(}datf2.4\PY{p}{,} genmap\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor} }]:} plot\PY{p}{(}countXO\PY{p}{(}datf2.4\PY{p}{)}\PY{p}{,} ylab\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Number of crossovers\PYZdq{}}\PY{p}{)}
+        hist\PY{p}{(}countXO\PY{p}{(}datf2.4\PY{p}{)}\PY{p}{,} ylab\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Number of crossovers\PYZdq{}}\PY{p}{)}
+        \PY{k+kp}{mean}\PY{p}{(}countXO\PY{p}{(}datf2.4\PY{p}{)}\PY{p}{,} ylab\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Number of crossovers\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}31}]:} datf2.5 \PY{o}{\PYZlt{}\PYZhy{}} datf2.4
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}85}]:} plotPheno\PY{p}{(}datf2.5\PY{p}{,} pheno.col\PY{o}{=}\PY{l+m}{3}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_37_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor} }]:} \PY{c+c1}{\PYZsh{}plotMissing(datf2.5, reorder=TRUE)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}33}]:} datf2.5 \PY{o}{\PYZlt{}\PYZhy{}} calc.genoprob\PY{p}{(}datf2.5\PY{p}{,} step\PY{o}{=}\PY{l+m}{1}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}34}]:} datf2.5 \PY{o}{\PYZlt{}\PYZhy{}} calc.genoprob\PY{p}{(}datf2.5\PY{p}{,} step\PY{o}{=}\PY{l+m}{0}\PY{p}{,} off.end \PY{o}{=} \PY{l+m}{0}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}35}]:} out.em \PY{o}{\PYZlt{}\PYZhy{}} scanone\PY{p}{(}datf2.5\PY{p}{,} pheno.col \PY{o}{=} \PY{l+m}{2}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Warning message in checkcovar(cross, pheno.col, addcovar, intcovar, perm.strata, :
+"Dropping 58 individuals with missing phenotypes.
+"
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}36}]:} plot\PY{p}{(}out.em\PY{p}{,} chr\PY{o}{=}\PY{l+m}{1}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_42_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}37}]:} plot\PY{p}{(}out.em\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_43_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}61}]:} ac \PY{o}{\PYZlt{}\PYZhy{}} pull.pheno\PY{p}{(}datf2.5\PY{p}{,} \PY{k+kt}{c}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{SEX\PYZdq{}}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}66}]:} ac2 \PY{o}{\PYZlt{}\PYZhy{}} pull.pheno\PY{p}{(}datf2.5\PY{p}{,} \PY{k+kt}{c}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{SEX\PYZdq{}}\PY{p}{,}\PY{l+s}{\PYZdq{}}\PY{l+s}{GENERATION\PYZdq{}}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}75}]:} ac3 \PY{o}{\PYZlt{}\PYZhy{}} pull.pheno\PY{p}{(}datf2.5\PY{p}{,} \PY{k+kt}{c}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{SEX\PYZdq{}}\PY{p}{,}\PY{l+s}{\PYZdq{}}\PY{l+s}{GENERATION\PYZdq{}}\PY{p}{,}\PY{l+s}{\PYZdq{}}\PY{l+s}{DAM\PYZdq{}}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}86}]:} out.acovar \PY{o}{\PYZlt{}\PYZhy{}} scanone\PY{p}{(}datf2.5\PY{p}{,} pheno.col \PY{o}{=} \PY{l+m}{2}\PY{p}{,} addcovar\PY{o}{=}ac2\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Warning message in checkcovar(cross, pheno.col, addcovar, intcovar, perm.strata, :
+"Dropping 58 individuals with missing phenotypes.
+"
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}88}]:} out.acovar2 \PY{o}{\PYZlt{}\PYZhy{}} scanone\PY{p}{(}datf2.5\PY{p}{,} pheno.col \PY{o}{=} \PY{l+m}{3}\PY{p}{,} addcovar\PY{o}{=}ac\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Warning message in checkcovar(cross, pheno.col, addcovar, intcovar, perm.strata, :
+"Dropping 58 individuals with missing phenotypes.
+"
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}96}]:} plot\PY{p}{(}out.acovar2\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_49_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}97}]:} plot\PY{p}{(}out.acovar2\PY{p}{,} chr\PY{o}{=}\PY{l+m}{1}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_50_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}84}]:} plot\PY{p}{(}out.acovar\PY{p}{,} chr\PY{o}{=}\PY{l+m}{1}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_51_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}98}]:} out.acovar2
+\end{Verbatim}
+
+
+    \begin{tabular}{r|lll}
+  & chr & pos & lod\\
+\hline
+	1-1 & 1          &   0        & 0.65241793\\
+	1-2 & 1          &   5        & 0.05622077\\
+	1-3 & 1          &  10        & 0.10781628\\
+	1-4 & 1          &  15        & 0.12048366\\
+	1-5 & 1          &  20        & 0.08799437\\
+	1-6 & 1          &  25        & 0.08625542\\
+	1-7 & 1          &  30        & 0.08518095\\
+	1-8 & 1          &  35        & 0.01533707\\
+	1-9 & 1          &  40        & 0.03300940\\
+	1-10 & 1          &  45        & 0.01557329\\
+	1-11 & 1          &  50        & 0.02464574\\
+	1-12 & 1          &  55        & 0.03866794\\
+	1-13 & 1          &  60        & 0.05718353\\
+	1-14 & 1          &  65        & 0.10847764\\
+	1-15 & 1          &  70        & 0.21816120\\
+	1-16 & 1          &  75        & 0.14690370\\
+	1-17 & 1          &  80        & 0.14678056\\
+	1-18 & 1          &  85        & 0.22244498\\
+	1-19 & 1          &  90        & 0.25850371\\
+	1-20 & 1          &  95        & 0.29305883\\
+	1-21 & 1          & 100        & 0.31367975\\
+	1-22 & 1          & 105        & 0.32545535\\
+	1-23 & 1          & 110        & 0.31991035\\
+	1-24 & 1          & 115        & 0.63972137\\
+	1-25 & 1          & 120        & 0.68612189\\
+	1-26 & 1          & 125        & 0.73694981\\
+	1-27 & 1          & 130        & 0.70795141\\
+	1-28 & 1          & 135        & 0.69428018\\
+	1-29 & 1          & 140        & 0.61629750\\
+	1-30 & 1          & 145        & 0.49017698\\
+	... & ... & ... & ...\\
+	21-1 & 21          &  0          & 1.232520220\\
+	21-2 & 21          &  5          & 1.561024533\\
+	21-3 & 21          & 10          & 1.911869596\\
+	21-4 & 21          & 15          & 2.288551375\\
+	21-5 & 21          & 20          & 2.123700810\\
+	21-6 & 21          & 25          & 4.926458475\\
+	21-7 & 21          & 30          & 2.807975154\\
+	21-8 & 21          & 35          & 2.169006477\\
+	22-1 & 22          &  0          & 0.326632238\\
+	22-2 & 22          &  5          & 0.204676200\\
+	22-3 & 22          & 10          & 0.151735049\\
+	22-4 & 22          & 15          & 0.434611549\\
+	22-5 & 22          & 20          & 0.337040248\\
+	22-6 & 22          & 25          & 0.002534789\\
+	22-7 & 22          & 30          & 0.172151272\\
+	22-8 & 22          & 35          & 0.153983742\\
+	23-1 & 23          &  0          & 0.857451639\\
+	23-2 & 23          &  5          & 0.828250668\\
+	23-3 & 23          & 10          & 0.670768596\\
+	23-4 & 23          & 15          & 0.920168548\\
+	23-5 & 23          & 20          & 1.566635395\\
+	23-6 & 23          & 25          & 1.811561460\\
+	23-7 & 23          & 30          & 2.522827127\\
+	24-1 & 24          &  0          & 0.136067139\\
+	24-2 & 24          &  5          & 0.088729306\\
+	24-3 & 24          & 10          & 0.032506631\\
+	24-4 & 24          & 15          & 0.052264509\\
+	24-5 & 24          & 20          & 0.234385612\\
+	24-6 & 24          & 25          & 0.101969774\\
+	24-7 & 24          & 30          & 0.039400442\\
+\end{tabular}
+
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}99}]:} write.csv\PY{p}{(}out.acovar2\PY{p}{,} \PY{l+s}{\PYZdq{}}\PY{l+s}{20190828\PYZus{}out\PYZus{}all\PYZus{}normbw8\PYZus{}ctrlsex.csv\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+
+
+
+    % Add a bibliography block to the postdoc
+    
+    
+    
+    \end{document}

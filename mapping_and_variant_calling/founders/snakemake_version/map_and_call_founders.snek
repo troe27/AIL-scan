@@ -1,0 +1,160 @@
+configfile: "config/config.yaml"
+
+import os
+
+"""
+snakefile to call variants on the founder(30X)-genotypes
+tilman.ronneburg@imbim.uu.se
+"""
+
+# obtain sample names
+
+
+wild = list()
+wild1, = glob_wildcards(os.path.join(config["infolder"], "{sample}_R2_001.fastq.gz"))
+wild2, = glob_wildcards(os.path.join(config["infolder"], "{sample}.bam")) #FIXME purge outfolder and make datafolder
+wild = list(set(wild1 + wild2))
+
+ref_base = config["ref"].rsplit(".",1)[0]
+
+rule all:
+    input:
+        expand(os.path.join(config["datafolder"], "{sample}.g.vcf"), sample=wild)
+
+
+rule prep_ref_index_bwa:
+    input:
+        config["ref"]
+    output:
+        config["ref"]+".amb",
+        config["ref"]+".ann",
+        config["ref"]+".bwt",
+        config["ref"]+".gzi",
+        config["ref"]+".pac",
+        config["ref"]+".sa"
+    conda:
+        "env/env.yaml"
+    shell:
+        "bwa index {input}"
+
+
+rule prep_ref_index_dict:
+    input:
+        config["ref"]
+    output:
+        ref_base+".dict"
+    params:
+        picard = config["picard"]
+    conda:
+        "env/env.yaml"
+    threads: 1
+    shell:
+        "module load picard;java -Xmx4G -jar {params.picard} CreateSequenceDictionary R={input} O={output}"
+
+rule prep_ref_index_fai:
+    input:
+        config["ref"]
+    output:
+        ref_base+".fai"
+    conda:
+        "env/env.yaml"
+    shell:
+        "module load samtools; samtools faidx {input}"
+
+rule bwa_align:
+    input:
+        forward = config["infolder"]+"/{sample}_R1_L001.fastq",
+        reverse = config["infolder"]+"/{sample}_R2_L001.fastq",
+        ref = config["ref"],
+        amb = config["ref"]+".amb",
+        ann = config["ref"]+".ann",
+        bwt = config["ref"]+".bwt",
+        gzi = config["ref"]+".gzi",
+        pac = config["ref"]+".pac",
+        sa = config["ref"]+".sa"
+    output:
+        temp(config["infolder"]+"/{sample}.bam")
+    conda:
+        "env/env.yaml"
+    threads: 2
+    params:
+        outfolder = config["infolder"],
+        mem_mb = lambda wildcards, threads: threads*4000       # "6"#str(int(rule.threads[0])*4), #FIXME currently hardcoded, shouldnt be.
+    shell:
+        "bwa mem -aM -t {threads} {input.ref} {input.forward} {input.reverse} | samtools view -bT {input.ref} | samtools sort -l 0 -@ {threads} -m {params.mem}G -output-fmt BAM -o {params.outfolder}/bams/{sample}.bam"
+
+rule picard_add_rg:
+    input:
+        rules.bwa_align.output
+    params:
+        picard = config["picard"],
+	rg="{sample}"
+    output:
+        temp(os.path.join(config["datafolder"], "{sample}_rg.bam"))
+    shell:
+        "java -Xmx5G -jar {params.picard} AddOrReplaceReadGroups I={input} O={output} RGID={params.rg} RGLB=nextera RGPL=illumina RGPU={params.rg} RGSM={params.rg}"
+
+rule picard_mark_duplicates:
+    input:
+        rules.picard_add_rg.output
+    params:
+        picard = config["picard"]
+    output:
+        bam = temp(os.path.join(config["datafolder"], "{sample}_rg_rmd.bam")),
+        log = os.path.join(config["datafolder"],"{sample}_dedup.log")
+    shell:
+        "java -Xmx5G -jar {params.picard} MarkDuplicates I={input} O={output.bam} METRICS_FILE={output.log} REMOVE_DUPLICATES=false "
+
+rule picard_build_bai:
+    input:
+        rules.picard_mark_duplicates.output.bam
+    params:
+        outfolder = config["datafolder"],
+        picard = config["picard"]
+    output:
+        temp(os.path.join(config["datafolder"], "{sample}_rg_rmd.bai"))
+    conda:
+        "env/env.yaml"
+    shell:
+        "java -Xmx5G -jar {params.picard} BuildBamIndex I={input}"
+
+#rule gatk_unified_genotyper:
+#    input:
+#        ref =
+#        idx = expand("-I {params.outfolder}/{sample}_rg_rmd.bai", sample=samples)
+#        files = expand("-I {params.outfolder}/{sample}_rg_rmd.bam", sample=samples)
+#    params:
+#        gatk = config["gatk"]
+#        mem = "60g"
+#        outmode = config["UG_outmode"]
+#    threads:
+#        "20"
+#    conda:
+#        "env/env.yaml"
+#    output:
+#        "{params.outfolder}/all_UG.raw.vcf"
+#    shell:
+#        "module load gatk/3.7.0;java -Xmx{params.mem} -jar {params.gatk} -T UnifiedGenotyper -R {input.ref} {input.files} -o {output} -nt {threads} --output_mode {params.outmode}  "
+
+
+rule gatk_haplotypecaller:
+    input:
+        bam = rules.picard_mark_duplicates.output.bam,
+        bai = rules.picard_build_bai.output,
+        ref = config["ref_unzipped"],
+        d = ref_base+".dict",
+    params:
+        et = config["emit_thresh"],
+        ct = config["call_thresh"],
+        mbq = config["min_basescore"],
+        om = config["outmode"],
+        gatk = config["gatk"],
+    output:
+        gvcf =os.path.join(config["datafolder"],"{sample}.g.vcf"),
+        idx = os.path.join(config["datafolder"],"{sample}.g.vcf.idx"),
+    threads:
+        15
+    conda:
+        "env/env.yaml"
+    shell:
+        "module load bioinfo-tools;module load GATK/3.8-0;java -Xmx5G -jar {params.gatk} --analysis_type HaplotypeCaller -I {input.bam} --emitRefConfidence GVCF --variant_index_type LINEAR --variant_index_parameter 128000 -mbq {params.mbq} -stand_call_conf {params.ct} -out_mode {params.om} -o {output.gvcf} -R {input.ref} -nct {threads} -nt 1 "

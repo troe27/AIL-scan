@@ -1,0 +1,17 @@
+#Supplementary Table S3.
+#Estimates of the additive effects for the markers closest to the finemapped QTL-peaks in the F2 (Wahlberg et al. 2009) and F15 intercross generations (this study).
+
+Locus GGA2 QTL Markers_(F15/F2) Position_(F15/F2Mb) F2_Additive_(a±SE) F15_Additive_(a±SE)
+1 1 Growth1 rs14916997/rs15502284 168.7/170.2 30.0±8.5 26.2±5.8
+2 1 Growth1 rs316102705/rs15502284 171.5/170.2 30.0±8.5 -6.9±5.9
+3 2 Growth2 rs313044994/rs15105085 60.5/59.4 13.3±8.5 20.9±7.1
+4 2 Growth3 rs15143460/rs16107541 112.1/113.1 17.4±8.5 21.4±6.3
+5 3 Growth4 rs15321683/rs15321683 33.6/33.6 12.8±8.6 21.1±5.6
+5 3 Growth4 rs14339371/rs15321683 33.9/33.6 12.8±8.6 9.9±6.5
+6 4 Growth6 rs14417942/ADL0143 1.5/1.4 17.1±8.5 10.1±6.0
+7 4 Growth6 rs314557363/rs14428592 11.7/11.3 29.0±8.4 10.6±6.1
+8 7 Growth9 rs14610961/rs15852323 15.7/15.5 14.8±10.5 11.8±5.9
+8 7 Growth9 rs15853763/rs15852323 16.3/15.5 14.8±10.5 0.8±5.7
+9 7 Growth9 rs316269048/ADL0279 23.9/23.2 37.5±8.6 1.8±5.6
+9 7 Growth9 rs315233740/ADL0279 24.0/23.2 37.5±8.6 12.7±5.5
+10 20 Growth12 rs14280503/MC3R_PYRO 12.8/12.4 18.1±8.4 15.1±5.7

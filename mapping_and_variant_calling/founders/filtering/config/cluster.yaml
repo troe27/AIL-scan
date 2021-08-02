@@ -1,0 +1,8 @@
+__default__:
+  compute_type : "core"
+  compute_num : "1"
+  days : "00"
+  hours : "23"
+  minutes : "00"
+  project : "snic2018-3-170"
+  mail : "tilman.ronneburg@imbim.uu.se"

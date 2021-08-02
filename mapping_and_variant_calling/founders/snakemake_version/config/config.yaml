@@ -1,0 +1,21 @@
+ref:
+    /home/tilman/storage/ref_gg6a/GCF_000002315.5_GRCg6a_genomic.fna.gz 
+ref_unzipped:
+   /home/tilman/storage/ref_gg6a/ref_unzipped/GCF_000002315.5_GRCg6a_genomic.fna
+infolder:
+    /home/tilman/storage2/Galgal6_BAM_F1/bams  
+datafolder:
+    /home/tilman/storage2/Galgal6_BAM_F1/data
+
+picard:
+    /sw/apps/bioinfo/picard/2.10.3/rackham/picard.jar
+
+gatk:
+    /sw/apps/bioinfo/GATK/3.8-0/GenomeAnalysisTK.jar
+
+UG_outmode:
+    "EMIT_ALL_SITES"
+emit_thresh: "20"
+call_thresh: "30"
+min_basescore: "20"
+outmode: "EMIT_ALL_CONFIDENT_SITES"

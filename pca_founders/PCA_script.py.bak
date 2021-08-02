@@ -1,0 +1,180 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas
+from sklearn.preprocessing import Imputer
+from sklearn.decomposition import PCA
+import argparse
+from argparse import RawTextHelpFormatter
+
+def cli_parser():
+    '''
+   parses command line input
+
+    '''
+    parser_main = argparse.ArgumentParser(prog='make_pca_for_VCF',
+                                          description='''WHAT THIS SCRIPT DOES:
+    ######################################################
+    INPUT : VCF file, filtered for biallelic snps, no indels
+    ACTION: performs PCA
+    OUTPUT: Scatterplot PCA1 vs PCA2
+    NOTE:
+        can currently only do bi-allelic vcfs
+
+
+
+
+
+
+    #####################################################''',
+                                            formatter_class=RawTextHelpFormatter
+                                         )
+    parser_main.add_argument("-i","--infile",
+                             help="path/to/your_snp_file.VCF",
+                             required = True)
+    parser_main.add_argument("-o", "--outfileprefix",
+                             help="path/outfix for the output_files",
+                             required = True)
+    parser_main.add_argument("-c", "--cumulative_explained_variance",
+                             help="look at cumulative explained_variance_ratio_ per PCA, needs number of PCAs to look at",
+                             default = None)
+    parser_main.add_argument("-f", "--fancy",
+                             help="slightly more fancy plots, uses seaborn",
+                             action = "store_true")
+
+    args = parser_main.parse_args()
+    return args
+
+class LVCF(object):
+    def __init__(self, filename):
+
+        self.filename = filename
+
+    def get_header(self):
+
+        with open(self.filename, "r") as handle:
+            for line in handle:
+                if not line.startswith("##"):
+                    if line.startswith("#"):
+                        header = line.rstrip().split("\t")
+                        break
+        return header
+
+    def get_col_pos(self, col):
+
+        header=self.get_header()
+        col_pos = None
+        for i, c_header in enumerate(header):
+            if str(col) in str(c_header):
+                col_pos = i
+                break
+        if col_pos == None:
+            print " possible cols are"+"\t".join(header)
+            raise IOError
+        return col_pos
+
+    def get_col(self, col_pos):
+
+        col_list = []
+        with open(self.filename, "r") as handle:
+            for line in handle:
+                if not line.startswith("##"):
+                    split = line.split("\t")
+                    col_list.append(split[col_pos])
+        return col_list
+
+    def get_sample_dict(self, col_list):
+
+        col_pos_dict = {}
+        d = {}
+        for col_header in col_list:
+            col_pos_dict[col_header]=self.get_col_pos(col=col_header)
+        for key in col_pos_dict.keys():
+            d[key]=np.array(self.get_col(col_pos=col_pos_dict[key]))
+        return d
+
+    def new_get_sample_dict(self, col_list):
+
+        col_pos_dict = {}
+        d = {}
+        for col_header in col_list:
+            col_pos_dict[col_header]=self.get_col_pos(col=col_header)
+            d[col_header] = []
+        with open(self.filename, "r") as handle:
+            for line in handle:
+                if not line.startswith("##"):
+                    split = line.split("\t")
+                    for key in col_pos_dict.keys():
+                        g = split[col_pos_dict[key]].split(":")[0]
+                        if g == "0/0":
+                            d[key].append(0.0)
+                        elif g == "0/1":
+                            d[key].append(0.5)
+                        elif g == "1/1":
+                            d[key].append(1.0)
+                        else:
+                            d[key].append(float("NaN"))
+        for key in d.keys():
+            d[key].pop(0)
+            d[key]=np.array(d[key])
+        return d
+
+def make_dataframe(args):
+    t = LVCF(filename=args.infile)
+    a = t.get_header()
+    d = t.new_get_sample_dict(a[9:])
+    snps = t.get_col(2)
+    snps.pop(0)
+    df = pandas.DataFrame.from_dict(d, orient='columns', dtype=float)
+    df = df.transpose()
+    df.columns=snps
+    df['sample'] = df.index
+    return df
+
+def run_PCA(args,dataframe):
+    x = dataframe.iloc[:,0:-1].values
+    y = dataframe.iloc[:,-1].values
+    imputer=Imputer(missing_values="NaN", strategy='mean', axis=0)
+    imputer = imputer.fit(x[:,:])
+    x[:, :]=imputer.transform(x[:, :])
+
+    if args.cumulative_explained_variance:
+        pca = PCA(n_components=int(args.cumulative_explained_variance))
+        pca_x = pca.fit_transform(x)
+        var = pca.explained_variance_ratio_
+        var1=np.cumsum(np.round(pca.explained_variance_ratio_, decimals=4)*100)
+        plt.bar(range(len(var1)+1)[1:],var1, color="Grey")
+        plt.ylabel("cumulative explained variance in percent")
+        plt.xlabel("n principle components")
+        plt.savefig(args.outfileprefix+'_cumulative_explained_variance.png', bbox_inches='tight')
+
+    pca = PCA(n_components=2)
+    pca.fit(x)
+    pca_x1=pca.fit_transform(x)
+    plot_scatter_PCA(args=args, PCA_results=pca_x1, labels=y)
+    np.savetxt(args.outfileprefix+"_pca_data.txt", pca_x1, fmt='%.18e', delimiter=' ', newline='\n')
+
+def plot_scatter_PCA(args,PCA_results,labels):
+    if args.fancy:
+        import seaborn as sns
+        sns.set(style="white", color_codes=True)
+        g = sns.JointGrid(x=PCA_results[:,0], y=PCA_results[:,1], size=30)
+        g = g.plot_joint(plt.scatter, color=".5", edgecolor="white")
+        g = g.plot_marginals(sns.distplot, kde=False, color=".5", bins=50)
+        plt.savefig(args.outfileprefix+'_2d_PCA.pdf', bbox_inches='tight')
+
+    else:
+        plt.figure(figsize=(20,20))
+        plt.scatter(PCA_results[:,0], PCA_results[:,1])
+        plt.xlabel(s="PCA_1")
+        plt.ylabel(s="PCA_2")
+        #for i, txt in enumerate(list(labels)):
+        #    plt.annotate(str(txt),(PCA_results[:,0],PCA_results[:,1]))
+        plt.savefig(args.outfileprefix+'_2d_PCA.pdf', bbox_inches='tight')
+
+def main():
+    args = cli_parser()
+    df = make_dataframe(args)
+    run_PCA(args,df)
+
+if __name__ == "__main__":
+    main()

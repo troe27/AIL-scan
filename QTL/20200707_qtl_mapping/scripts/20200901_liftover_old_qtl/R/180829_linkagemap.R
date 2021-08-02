@@ -1,0 +1,480 @@
+#########################################################################################################
+# Script for building a linkage map in the HWS x LWS F2 using GBSA scored genotypes
+#
+# Author Örjan Carlborg 180201; Latest edits 181114
+#########################################################################################################
+
+library(qtl)
+setwd(dir = '~/Dropbox/Projects/Ongoing/HL_F2_SeqMrk/F2_re_seq/')
+
+############# 1. Read in the data from file & check it ############
+
+## File with the GBS/TIGER imputed genotypes from Yanjun, i.e. GBS scored markers with alleles fixed between founders within F2 family
+# Latest data generated 20181113 by Yanjun  Zan
+#f2cross <- read.cross(format="csvs",genfile = "/Users/orjanc/Dropbox/Projects/Ongoing/HL_F2_SeqMrk/F2_re_seq/data/181113/F2_833.within.fam._Tiger_1Mb_bins_cut_raw_no_cut_1mb_bin2018-11-13geno.csv", phefile = "/Users/orjanc/Dropbox/Projects/Ongoing/HL_F2_SeqMrk/F2_re_seq/data/181113/F2_833.within.fam._Tiger_1Mb_bins_cut_raw_no_cut_1mb_bin2018-11-13pheno.csv",na.strings = "NA",genotypes = c("1", "0", "-1", "C", "D"), estimate.map = FALSE, map.function = "haldane", sep = ',')
+f2cross <- read.cross(format="csvs",genfile = "/Users/orjanc/Dropbox/Projects/Ongoing/HL_F2_SeqMrk/F2_re_seq/data/181113/F2_833.within.fam._Tiger_1Mb_bins_cut_raw_no_cut_0.5mb_bin2018-11-13geno.csv", phefile = "/Users/orjanc/Dropbox/Projects/Ongoing/HL_F2_SeqMrk/F2_re_seq/data/181113/F2_833.within.fam._Tiger_1Mb_bins_cut_raw_no_cut_1mb_bin2018-11-13pheno.csv",na.strings = "NA",genotypes = c("1", "0", "-1", "C", "D"), estimate.map = FALSE, map.function = "haldane", sep = ',')
+
+#Read info on which individuals passed QC
+F2_info <- read.table(file ='/Users/orjanc/Dropbox/Projects/Ongoing/HL_F2_SeqMrk/F2_re_seq/data/181113/F2_comprehensive_info.txt',sep ='\t',header = TRUE)
+
+#Create info on which individuals pass QC-criteria
+# 1. Average coverage > 0.05
+# 2. Marker per Mb > 5
+# 3. No DNA contamination: DNA_contamination == pass
+# 4. OK pedigree: Pedigree_OK == pass
+
+QCF2 <- F2_info[which(F2_info$Average_coverage > 0.05 & F2_info$Mrk_per_mb > 5 & F2_info$DNA_contamination == 'pass' & F2_info$Pedigree_OK == 'pass'),1]
+
+#Keep only QC-pass individuals
+f2cross <- subset(f2cross, ind= as.character(intersect(f2cross$pheno$id,QCF2)))
+
+############# 2. Have a look at the imported data #############
+
+## First an overall summary
+summary(f2cross)
+mapthis<-f2cross
+
+## Generate a plot to visualize missing genotypes across the markers 
+
+# If desired, subset object to work with specific parts like chromosomes or sexes
+  #f2cross<-subset(f2cross, chr = c(12, 16, 30, 31, 33, 103, 108, 110, 111, 112, 113, 115, 116))
+  # Males only
+  #f2cross <- subset(f2cross, ind=(f2cross$pheno$Sex==1))
+  # Females only
+  #f2cross <- subset(f2cross, ind=(f2cross$pheno$Sex==0))
+  #f2cross <- subset(f2cross, chr = c("37","38","39")) #3 defined scaffolds for sex chromosomes, update!
+
+plotMissing(f2cross)
+
+## Visual check for missing genotypes per individual & marker
+par(mfrow=c(1,2), las=1)
+plot(ntyped(f2cross), ylab="No. typed markers", main="No. genotypes by individual") 
+plot(ntyped(f2cross, "mar"), ylab="No. typed individuals",main="No. genotypes by marker")
+
+############# 3. Do a first cleaning of the data ##########################
+
+######## 3.A. First drop the markers that with genotype scores in few individuals as they complicates map estimation #######
+## Here use a threshold of 50 markers based on the visual inspection aboveas this is enough to 
+## estimate recombination with "reasonable" accuracy
+
+nt.bymar <- ntyped(f2cross, "mar")
+todrop <- names(nt.bymar[nt.bymar < 50])
+mapthis <- drop.markers(f2cross, todrop)
+
+#### Double-check that the markers have been dropped
+par(mfrow=c(1,2), las=1)
+plot(ntyped(mapthis), ylab="No. typed markers", main="No. genotypes by individual") 
+plot(ntyped(mapthis, "mar"), ylab="No. typed individuals",main="No. genotypes by marker")
+
+############# 3.B. Identify individuals that have GBSA scores for few markers ################
+#### Here, this is an indication that these individuals had low marker coverage
+#### The individual-ID's are given in the phenotype-column of the F2-cross infile
+
+id_lt200mrk <- mapthis$pheno[which(ntyped(mapthis)<600),1] 
+
+## Check the sequence-coverage for the selected individuals
+#### First read in the sequence coverage file
+#coverage_F2 <- read.table(file = './data/180208_F2_coverage.txt', row.names = 1)
+#### Print out the coverages
+#coverage_F2[row.names(coverage_F2) %in% id_lt200mrk,1]
+#### As expected, the scoring of few markers was due to the low coverage for these individuals.
+
+## The individuals with few genotyped markers are dropped from the linkage map construction
+mapthis <- subset(mapthis, ind=(ntyped(mapthis)>10))
+#### Note that this does not indicate that the genotypes are of low quality - can thus be included in later mapping!
+
+#### Check dataset again after the low-coverage individuals have been dropped
+par(mfrow=c(1,2), las=1)
+plot(ntyped(mapthis), ylab="No. typed markers", main="No. genotypes by individual") 
+plot(ntyped(mapthis, "mar"), ylab="No. typed individuals",main="No. genotypes by marker")
+
+############ 3.C. Check whether any individuals are duplicates that needs to be removed #############
+
+## Visually inspect the relationships between the individuals in the population
+cg <- comparegeno(mapthis)
+hist(cg[lower.tri(cg)], breaks=seq(0, 1, len=101), xlab="No. matching genotypes") 
+rug(cg[lower.tri(cg)])
+
+##  Identify the individuals that are highly related 
+#### Here, a threshold of 0.9 is used
+wh <- which(cg > 0.9, arr=TRUE)
+wh <- wh[wh[,1] < wh[,2],]
+wh
+
+## Inspect their genotype similarity
+#### This is done by checking the pairwise genotype tables; no relatedness higher so below for illustration only
+#g <- pull.geno(mapthis)
+#table(g[577,], g[594,])
+#table(g[594,], g[597,])
+
+########### 3.D. Check whether any markers are duplicates ############
+## No duplicates are expected given the way the genotypes are scored & the size of the population
+print(dup <- findDupMarkers(mapthis, exact.only=FALSE))
+# Duplicates here due to using markers with few genotyped individuals - removed if threshold is higher
+
+########### 3.E. Check for distorted segregation patterns ###########
+## This is an important quality control for this type of markers
+## This as it could indicate an error in GBSA genotype assignment despite most individuals having reads for them
+gt <- geno.table(mapthis)
+## A Bonferroni corrected threshold for the number of markers is used to identify and remove markers
+gt[gt$P.value < 0.05/totmar(mapthis),] 
+todrop <- rownames(gt[gt$P.value < 0.05/totmar(mapthis),]) 
+mapthis <- drop.markers(mapthis, todrop) 
+#mapthis2 <- drop.markers(mapthis, todrop2) 
+## Note1: More stringent filtering could, however, be used to obtain an even higher quality dataset for map construction
+## Note2: These markers do not necessarily have to be removed for mapping as a shortage of heterozygotes is expected for markers/bins with few reads
+
+########### 3.F. Evaluate the recombination frequencies for the markers ##########
+## This is a way to identify individuals that have skewed genotypes
+#### Could be an indication of DNA contamination / pedigree errors
+g <- pull.geno(mapthis)
+gfreq <- apply(g, 1, function(a) table(factor(a, levels=1:3)))
+gfreq <- t(t(gfreq) / colSums(gfreq))
+par(mfrow=c(1,3), las=1)
+for(i in 1:3) plot(gfreq[i,], ylab="Genotype frequency", main=c("AA", "AB", "BB")[i], ylim=c(0,1))
+
+## Drop these individuals due to the skewed genotype frequencies
+#### Individuals to keep
+id_gtfreq <- which(gfreq[1,]<0.5 & gfreq[2,]<0.7 & gfreq[2,]>0.3 & gfreq[3,]<0.5)
+
+# Keep strange individuals for explorations
+#id_gtfreq <- which(gfreq[1,]>0.5 | gfreq[2,]>0.7 | gfreq[2,]<0.3 | gfreq[3,]>0.5)
+#### Drop
+mapthis <- subset(mapthis, ind=(id_gtfreq))
+
+########## 4. Estimate a first rough draft of the linkage-map ############
+
+####  4.A. Estimate the recombination-fractions between pairs of markers #####
+mapthis <- est.rf(mapthis) 
+#mapthis_tst <- markerlrt(mapthis) # Using alternative
+
+## Plot the obtained recombination fractions against LOD-scores
+#### Do not want any high recombination-fractions together with high LOD-scores
+rf <- pull.rf(mapthis)
+lod <- pull.rf(mapthis, what="lod")
+plot(as.numeric(rf), as.numeric(lod), xlab="Recombination fraction", ylab="LOD score")
+
+#### Or weird linkages indicating that markers are wrongly ordered in the input data
+#### such as between chromosomes or orders within chromsomes
+
+## Evaluate by plotting pairwise recombination-fractions and LOD scores across the genome
+dev.off()
+plotRF(mapthis, alternate.chrid=TRUE)
+### Explorations of which chromosomes to merge
+###dev.off()
+###plotRF(mapthis, chr = c(12, 16, 30, 31, 33, 103, 108, 110, 111, 112, 113, 115, 116), alternate.chrid=TRUE, mark.diagonal = TRUE)
+###c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,30,31,32,33,101,102,103,104,105,106,108,109,110,111,112,113,114,115,116)
+### 103 & 115 to chr 2??
+### 108 to chr 12
+### 103 to 16?? 115 to 16?? 116 to 16?? ; 16  looks strange order
+### 116 to 30?
+### 103 to 31? 110 to 31? 113 to 31? 115 to 31?
+### 103 to 33? 111 to 33? 112 to 33?? 115 to 33? 116 to 33??
+###  c(12, 16, 30, 31, 33, 103, 108, 110, 111, 112, 113, 115, 116)
+### mapthis_tst<-subset(mapthis, chr = c(12, 16, 30, 31, 33, 103, 108, 110, 111, 112, 113, 115, 116))
+### mapthis_tst<-est.rf(mapthis_tst)
+
+### Estimate linkage groups for the selected subset of markers
+lg <- formLinkageGroups(mapthis, max.rf=0.3, min.lod=6)
+table(lg[,2])
+mapthis <- formLinkageGroups(mapthis, max.rf=0.3, min.lod=6, reorgMarkers = TRUE)
+mapthis <- orderMarkers(mapthis, use.ripple = TRUE)
+dev.off()
+plotRF(mapthis, alternate.chrid=TRUE)
+plot.map(mapthis, show.marker.names = TRUE)
+plot.map(mapthis_tst,chr = c(1), show.marker.names = TRUE)
+
+
+## Looks pretty OK from the graph - possibly a couple of linkage-groups that could be explored further 
+#### later to see if there might be some structural rearrangements on some segregating haplotypes
+#### or problematic genotypes in some areas
+
+######## 4.B. Get the complete genetic linkage map  #########
+genmap <- est.map(mapthis, error.prob=0.005, maxit = 1000, tol = 1e-4) 
+genmap2 <- est.map(mapthis2, error.prob=0.005) 
+
+#Map without filtering for segregation distortion/genotype frequencies
+genmap1 <- est.map(mapthis1, error.prob=0.005) 
+mapthis1 <- mapthis
+genmap1 <- genmap
+
+## As numerical summary
+summaryMap(genmap)
+## As a plot
+plotMap(genmap) 
+mapthis <- replace.map(genmap, newmap)
+
+genmap5 <- genmap
+mapthis5 <- mapthis
+
+########### 5. Improve quality of linkage map ###########
+## The raw linkage map is too long, suggesting that there might be too high recombination-rates scored in some individuals
+## Therefore try to identify these
+
+########### 5.A. Find & remove individuals with excessive recombination
+## These could be ones with problems in assigning GBSA scores or sample mixups
+plot(countXO(mapthis), ylab="Number of crossovers")
+hist(countXO(mapthis), ylab="Number of crossovers")
+mean(countXO(mapthis), ylab="Number of crossovers")
+
+#Check correlation between XO's and fit with SNP genotypes
+tmp<-countXO(mapthis)
+tmpinfo <- cbind(as.numeric(names(tmp)), unname(tmp))
+tmpinfo <- as.data.frame(tmpinfo)
+rownames(tmpinfo) <- tmpinfo[,1]
+colnames(tmpinfo) <- c("ID","XO")
+#F2_info <- F2_info[!duplicated(F2_info$ID_DNA_library), ]
+not_duplicated <- !(F2_info[,1]%in%F2_info[duplicated(F2_info$ID_DNA_library),1])
+F2_info <- F2_info[not_duplicated,]
+rownames(F2_info) <- F2_info$ID_DNA_library
+all <- merge(F2_info,tmpinfo, by = 0)
+
+## Bi-modal distribution of crossovers identifies individuals with approximately double the
+## amount of recominations than the majority. Mixup of F2 samples or bug in code??
+
+## Remove these problematic individuals
+#### Threshold of 70 recombinations picked arbitrarily from visual inspection.
+mapthis2 <- subset(mapthis, ind=(countXO(mapthis) < 110))
+rf <- pull.rf(mapthis2)
+lod <- pull.rf(mapthis2, what="lod")
+plot(as.numeric(rf), as.numeric(lod), xlab="Recombination fraction", ylab="LOD score")
+
+plot(countXO(mapthis2), ylab="Number of crossovers")
+hist(countXO(mapthis2), ylab="Number of crossovers")
+mean(countXO(mapthis2), ylab="Number of crossovers")
+
+#########  6. Create final map with clean dataset ###############
+## Build map
+newmap2 <- est.map(mapthis2, error.prob=0.05)
+summaryMap(newmap2)
+dev.off()
+plotMap(newmap2)
+
+#########  7. Output final map in text and graphics ##############
+mapthis <- replace.map(mapthis, newmap2)
+summaryMap(mapthis)
+dev.off()
+plotMap(mapthis)
+
+######### 8. Sex chromosome  ############
+gt_sex <- geno.table(mapthis_sex)
+gt_sex[gt_sex$P.value < 0.05/totmar(mapthis_sex),]
+#todrop_sex <- rownames(gt_sex[gt_sex$P.value < 0.05/totmar(mapthis_sex),]) # Not used now
+#mapthis_sex <- drop.markers(mapthis_sex, todrop_sex) #Not used now
+
+g_sex <- pull.geno(mapthis_sex)
+gfreq_sex <- apply(g_sex, 1, function(a) table(factor(a, levels=1:3)))
+gfreq_sex <- t(t(gfreq_sex) / colSums(gfreq_sex))
+par(mfrow=c(1,3), las=1)
+for(i in 1:3) plot(gfreq_sex[i,], ylab="Genotype frequency", main=c("AA", "AB", "BB")[i], ylim=c(0,1))
+
+#Strange ID's
+id_gtfreq_sex <- which((gfreq_sex[1,]>0.02 & gfreq_sex[3,]<0.02)|(gfreq_sex[1,]<0.02 & gfreq_sex[3,]>0.02))
+mapthis_sex$pheno[which(gfreq_sex[1,]>0.02 & gfreq_sex[3,]>0.02),1]
+mapthis_sex <- subset(mapthis_sex, ind=(id_gtfreq_sex))
+
+mapthis_sex <- est.rf(mapthis_sex)
+
+rf_sex <- pull.rf(mapthis_sex)
+lod_sex <- pull.rf(mapthis_sex, what="lod")
+plot(as.numeric(rf_sex), as.numeric(lod_sex), xlab="Recombination fraction", ylab="LOD score")
+
+mn_sex <- markernames(mapthis_sex)
+par(mfrow=c(2,1))
+plot(rf_sex, mn_sex[1], bandcol="gray70", ylim=c(0,1), alternate.chrid=TRUE) > abline(h=0.5, lty=2)
+plot(lod_sex, mn_sex[14], bandcol="gray70", alternate.chrid=TRUE)
+geno.crosstab(mapthis_sex, mn_sex[1], mn_sex[2])
+
+mapthis_sex <- orderMarkers(mapthis_sex)
+pull.map(mapthis_sex)
+summaryMap(mapthis_sex)
+dev.off()
+plotMap(mapthis_sex)
+rip_sex <- ripple(mapthis_sex, window=7)
+summary(rip_sex)
+
+#genmap_sex <- est.map(mapthis_sex, error.prob=0.005)
+#summaryMap(genmap_sex)
+#plotMap(genmap_sex)
+
+######### 9. Save the R/qtl object with linkage map ##############
+save(mapthis, file = '~/Dropbox/Projects/Ongoing/HL_F2_SeqMrk/F2_re_seq/data/HL_F2_mapthis.Rdata')
+
+#### QTL mapping ####
+
+# Phenotype checking
+plotPheno(mapthis2, pheno.col=2)
+plotMissing(mapthis2, reorder=TRUE)
+
+plotPheno(f2qtl, pheno.col=2)
+plotMissing(f2qtl, reorder=TRUE)
+
+## covariates
+ac <- pull.pheno(f2qtl, c("Sex"))
+
+out.mr <- scanone(f2qtl, method = "mr", pheno.col = 2,addcovar = ac)
+summary(out.mr)
+plot(out.mr,chr = 1)
+plot(out.mr,chr = 3)
+plot(out.mr,chr = 4)
+plot(out.mr,chr = 7)
+
+# Calculate QTL genotype probabilities
+mapthis2 <- calc.genoprob(mapthis, step=1)
+mapthis2 <- calc.genoprob(mapthis, step=0, off.end = 0)
+
+# ML QTL scan
+out.em <- scanone(mapthis2, pheno.col = 2)
+summary(out.em)
+plot(out.em)
+
+## scan with additive but not the interactive covariate
+out.acovar <- scanone(mapthis2, pheno.col = 2, addcovar=ac)
+plot(out.acovar)
+summary(out.acovar)
+mname_c1 <- find.marker(mapthis,chr=1, pos=413)
+mname_c4 <- find.marker(mapthis,chr=4, pos=15)
+mname_c7 <- find.marker(mapthis,chr=7, pos=72)
+effectplot(mapthis,pheno.col = 2, mname1 = mname_c1)
+effectplot(mapthis,pheno.col = 2, mname1 = mname_c4)
+effectplot(mapthis,pheno.col = 2, mname1 = mname_c7)
+
+# take out several QTLs and make QTL object
+qc <- c(1, 3, 4, 5, 7, 21, 22)
+qp <- c(455, 271, 16, 17, 73, 49, 86)
+fake.f2 <- subset(mapthis, chr=qc)
+
+fake.f2 <- calc.genoprob(fake.f2, step=2, err=0.001)
+qtl <- makeqtl(fake.f2, qc, qp, what="prob")
+
+Sex <- data.frame(Sex=pull.pheno(fake.f2, "SEX"))
+lod.add <- fitqtl(fake.f2, pheno.col=2, qtl, formula=y~Q1+Q2+Q3+Q4+Q5+Q6+Q7+Sex, cov=Sex, method="hk")
+summary(lod.add)
+
+# HK QTL scan
+out.hk <- scanone(mapthis, pheno.col = 2, chr = c(1,3,4,5,7,21,22), method="hk", addcovar = ac)
+plot(out.hk)
+
+# Compare
+plot(out.em, out.hk, out.acovar, col=c("blue", "red","green"))
+
+#### Additional stuff ########
+
+####### A.1. Test infering linkage groups from the data ########
+##   Here this basically splits chromosomes with large distances between markers
+lg <- formLinkageGroups(mapthis2, max.rf=0.3, min.lod=6) #lg_sex <- formLinkageGroups(mapthis_sex, max.rf=0.3, min.lod=3)
+table(lg[,2]) #table(lg_sex[,2])
+mapthis2_flg <- formLinkageGroups(mapthis2, max.rf=0.3, min.lod=3, reorgMarkers = TRUE)
+dev.off()
+plotRF(mapthis2_flg, alternate.chrid=TRUE)
+
+###### A.2. Try reordering markers where linkages extend over long regions - possible rearrangements? #######
+
+#### For example chromosome 4 
+mapthis <- orderMarkers(mapthis), chr=4)
+pull.map(mapthis, chr=4)
+
+###### A.3. Estimate maximum-likelihood estimate of the overall genotyping error from data ############
+## Estimate likelihoods
+loglik <- err <- c(0.001, 0.0025, 0.005, 0.0075, 0.01, 0.0125, 0.015, 0.0175, 0.02) 
+for(i in seq(along=err)) { 
+  cat(i, "of", length(err), "\n")
+  tempmap <- est.map(mapthis, error.prob=err[i])
+  loglik[i] <- do.call(sum,sapply(tempmap, attr, "loglik")) 
+}
+lod <- (loglik - max(loglik))/log(10)
+
+## Plot likelihoods to identify the most likely overall GBSA genotyping error rate
+plot(err, lod, xlab="Genotyping error rate", xlim=c(0,0.02), ylab=expression(paste(log[10], " likelihood")))
+
+###### A.4. Evaluate skewed genotype frequencies   ###############
+
+## We note that some individuals have more genome-wide "AA/AB/BB" genotypes than expected
+#### Which are these individuals?
+id_gtfreqAA <- mapthis$pheno[which(gfreq[1,]>0.6),1]
+id_gtfreqAB <- c(mapthis$pheno[which(gfreq[2,]>0.75),1],mapthis$pheno[which(gfreq[2,]<0.35),1])
+id_gtfreqBB <- mapthis$pheno[which(gfreq[3,]>0.6),1]
+id_gtfreqALL <- sort(unique(c(id_gtfreqAA,id_gtfreqAB,id_gtfreqBB)))
+
+#### Is it in any way related to coverage? 
+coverage_F2[row.names(coverage_F2) %in% id_gtfreqAA,1]
+coverage_F2[row.names(coverage_F2) %in% id_gtfreqAB,1]
+coverage_F2[row.names(coverage_F2) %in% id_gtfreqBB,1]
+#### No, coverage was not low, so check them futher for other problems!
+
+#### Genotype skew is for every chromosome, suggests sample mixup with parent
+table(mapthis$geno$`1`$data[which(gfreq[3,]>0.6),])
+table(mapthis$geno$`2`$data[which(gfreq[3,]>0.6),])
+table(mapthis$geno$`3`$data[which(gfreq[3,]>0.6),])
+
+###### A.5. Look for genotyping errors in individual data ############
+## Useful for final quality fix of data
+mapthis <- calc.errorlod(mapthis, error.prob=0.05)
+print(toperr <- top.errorlod(mapthis, cutoff=5))
+
+## Manually go through chromosomes
+plotGeno(mapthis, chr=1, ind=toperr$id[toperr$chr==1], cutoff=5, include.xo=TRUE,cex = .5)
+plotGeno(mapthis, chr=14, ind=toperr$id[toperr$chr==14], cutoff=4, include.xo=TRUE)
+
+## Revisit segregation distortion across genome to view these for markers
+gt <- geno.table(mapthis, scanone.output=TRUE)
+par(mfrow=c(2,1))
+plot(gt, ylab=expression(paste(-log[10], " P-value"))) > plot(gt, lod=3:5, ylab="Genotype frequency")
+abline(h=c(0.25, 0.5), lty=2, col="gray")
+
+## Identify marker that seem problematic at Bf-threshold = 2 x 10-4
+gt[which(gt$neglog10P > -log10(0.05/269)),]
+
+# SD appears due to i) large number of missing genotypes and ii) missing heterozygotes. 
+# Possibly due to difficulty in being able to call heterozytotes?? None overlaps with ind of error ind genotypes
+
+####### A.6. Checking of crossovers in individual data ###########
+
+## Which individuals have more crossovers than expected?
+id_ex_co <- mapthis$pheno[which(countXO(mapthis) > 70),1]
+xo_pop <- cbind(mapthis$pheno[which(countXO(mapthis) > 0),1],countXO(mapthis)[which(countXO(mapthis) > 0)])
+
+## Evaluate their sequence overage
+coverage_F2[row.names(coverage_F2) %in% id_ex_co,1]
+#### Have good overall coverage, hence likely not coverage related
+
+######### A.7. Explore individuals with skewed genotype frequencies/excessive crossovers ########
+#### Threshold of 70 recombinations picked arbitrarily from visual inspection.
+
+plot(countXO(mapthis), ylab="Number of crossovers")
+hist(countXO(mapthis), ylab="Number of crossovers")
+mean(countXO(mapthis), ylab="Number of crossovers")
+
+mapthis_skew <- subset(mapthis, ind=(countXO(mapthis) > 100))
+mapthis_skew <- est.rf(mapthis_skew)
+rf <- pull.rf(mapthis_skew)
+lod <- pull.rf(mapthis_skew, what="lod")
+dev.off()
+plot(as.numeric(rf), as.numeric(lod), xlab="Recombination fraction", ylab="LOD score")
+
+plot(countXO(mapthis_skew), ylab="Number of crossovers")
+hist(countXO(mapthis_skew), ylab="Number of crossovers")
+mean(countXO(mapthis_skew), ylab="Number of crossovers")
+
+checkAlleles(mapthis_skew, threshold=3)
+
+lg <- formLinkageGroups(mapthis_skew, max.rf=0.35, min.lod=5)
+table(lg[,2])
+plotRF(mapthis_skew)
+
+mapthis_skew <- formLinkageGroups(mapthis_skew, max.rf=0.35, min.lod=4, reorgMarkers=TRUE)
+dev.off()
+plotRF(mapthis_skew, alternate.chrid=TRUE)
+
+cg <- comparegeno(mapthis_skew)
+hist(cg[lower.tri(cg)], breaks=seq(0, 1, len=101), xlab="No. matching genotypes") 
+rug(cg[lower.tri(cg)])
+
+mn1 <- markernames(mapthis_skew, chr=1)
+par(mfrow=c(2,1))
+plot(rf, mn1[46], bandcol="gray70", ylim=c(0,1), alternate.chrid=TRUE)
+abline(h=0.5, lty=2)
+plot(lod, mn1[46], bandcol="gray70", alternate.chrid=TRUE)
+
+mn3 <- markernames(mapthis_skew, chr=3)
+geno.crosstab(mapthis, mn1[3], mn3[4])

@@ -1,0 +1,13 @@
+
+VCFtools - 0.1.15
+(C) Adam Auton and Anthony Marcketta 2009
+
+Parameters as interpreted:
+	--vcf /home/tilman/storage2/all_GQ20_MQ50_noIndels_callrate0.3.vcf
+	--missing-indv
+	--out ./missingness_founders
+
+After filtering, kept 60 out of 60 Individuals
+Outputting Individual Missingness
+After filtering, kept 9340190 out of a possible 9340190 Sites
+Run Time = 137.00 seconds

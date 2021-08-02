@@ -1,0 +1,32 @@
+ """ make a genotype input_file that r/qtl can understand."""
+    df = df.fillna("NA")  # fill NaNs with "NA"
+
+    def remove_amb(x):
+        """ remove ambiguous calls and format to 1/0/-1/NA only """
+        if x=="NA":
+            return x
+        elif x >= 1.0-jitter:
+            return int(1)
+        elif 1.0-jitter>= x >0.0+jitter:
+            return "NA"
+        elif 0.0+jitter >= x >0.0-jitter:
+            return int(0)
+        elif 0.0-jitter >= x > -1.0+jitter:
+            return "NA"
+        elif x<= -1.0+jitter:
+            return int(-1)
+
+    df = df.applymap(remove_amb)
+    df.to_csv(".make_input_tmp.csv", sep=",")
+    t = open(".make_input_tmp.csv").read().split("\n")
+    first_line = t.pop(0).split(",")
+    first_line[0]="id"
+    chrom = []
+    for i in first_line[1:]:
+        chrom.append(i.split("-")[0])
+    chrom = ","+",".join(chrom)
+    first_line = ",".join(first_line)
+    with open(outfile, "w") as handle:
+        handle.write(first_line+"\n")
+        handle.write(chrom+"\n")
+        handle.write("\n".join(t))
